@@ -107,6 +107,14 @@
     transition: all 0.3s ease;
   }
 
+  .led-light[data-state=true]{
+    @apply green
+  }
+
+  .led-light[data-state=false]{
+    @apply red
+  }
+
   @keyframes green-pulse {
     0% {
       /* box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.3), 0 0 30px 10px rgba(0, 255, 0, 0.2), 0 0 45px 15px rgba(0, 255, 0, 0.1); */
@@ -135,7 +143,7 @@
   }
 
   .red {
-    animation: flicker 0.1s infinite, red-pulse ease-in-out 1s infinite alternate;
+    animation: flicker 0.1s infinite, red-pulse ease-in-out 1s infinite alternate-reverse;
     background: radial-gradient(circle at 50% 50%, #ff0000, #660000);
   }
 
