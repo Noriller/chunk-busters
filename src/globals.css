@@ -70,13 +70,23 @@
 
 @layer components {
   .led-light {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+
+  /* .led-light {
     width: 8em;
     height: 8em;
     border-radius: 50%;
     position: relative;
     z-index: 1;
     transition: all 0.3s ease;
-  }
+  } */
+
   .led-light::before {
     content: '';
     position: absolute;
@@ -206,7 +216,7 @@
       background-size: 400%;
       z-index: -1;
       border-radius: var(--radius);
-      animation: shadow var(--time) linear infinite;
+      animation: shadow 20s linear infinite;
     }
 
     &:after {
@@ -236,6 +246,18 @@
       ),
       linear-gradient(45deg, #4a3520, #6b4d30);
   }
+
+  .bg-circuit {
+    width: 100%;
+    height: 300px;
+    background-color: #1a5c1a;
+    background-image:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 10px 10px;
+    position: relative;
+    overflow: hidden;
+  };
 
   @keyframes shadow {
     0% {
