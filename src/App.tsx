@@ -29,7 +29,7 @@ import { Board } from './components/board';
 function App() {
   return (
     <div className='w-screen h-screen flex items-center justify-center bg-gray-900 p-4'>
-      <div className='w-full max-w-[90vmin] max-h-[90vmin] aspect-square'>
+      <div className='w-full max-w-[90vmin] max-h-[90vmin] aspect-square rainbow-shadow relative z-0'>
         <Board />
       </div>
     </div>
