@@ -1,36 +1,19 @@
-import { useEffect, useState } from 'react';
 import { Led } from './led';
+import { useBoards } from './useBoards';
 
 export function Board() {
+  const board = useBoards();
+
   return (
     <div className="bg-wood grid h-full w-full grid-cols-3 grid-rows-3 gap-[2%] rounded-lg p-[2%]">
-      {Array.from({ length: 9 }, (_, i) => (
-        <MiniBoard key={i} />
+      {Object.values(board).map((mini, i) => (
+        <MiniBoard key={i} lights={Object.values(mini)} />
       ))}
     </div>
   );
 }
 
-function MiniBoard() {
-  const random = () => Math.random() > 0.5;
-  const makeLights = () => Array.from({ length: 9 }, random);
-  const [lights, setLights] = useState(makeLights());
-
-  const randomIndex = () => Math.floor(Math.random() * 9);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const index = randomIndex();
-      setLights((lights) => {
-        const newLights = [...lights];
-        newLights[index] = !newLights[index];
-        return newLights;
-      });
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
-
+function MiniBoard({ lights }: { lights: boolean[] }) {
   return (
     <div className="bg-circuit h-full w-full rounded-lg p-[4%]">
       <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-[10%]">
