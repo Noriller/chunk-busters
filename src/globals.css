@@ -78,15 +78,6 @@
     transition: all 0.3s ease;
   }
 
-  /* .led-light {
-    width: 8em;
-    height: 8em;
-    border-radius: 50%;
-    position: relative;
-    z-index: 1;
-    transition: all 0.3s ease;
-  } */
-
   .led-light::before {
     content: '';
     position: absolute;
@@ -95,7 +86,6 @@
     right: 0;
     bottom: 0;
     border-radius: 50%;
-    /* box-shadow: 0 0 20px 5px currentColor, 0 0 30px 10px currentColor, 0 0 40px 15px rgba(255, 255, 255, 0.3); */
     opacity: 0.8;
     transition: all 0.3s ease;
   }
@@ -127,22 +117,18 @@
 
   @keyframes green-pulse {
     0% {
-      /* box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.3), 0 0 30px 10px rgba(0, 255, 0, 0.2), 0 0 45px 15px rgba(0, 255, 0, 0.1); */
       box-shadow: 0 0 1em .3em rgba(0, 255, 0, 0.3), 0 0 2em .7em rgba(0, 255, 0, 0.2), 0 0 3em 1em rgba(0, 255, 0, 0.1);
     }
     100% {
-      /* box-shadow: 0 0 60px 10px rgba(0, 255, 0, 0.3), 0 0 100px 30px rgba(0, 255, 0, 0.2), 0 0 150px 60px rgba(0, 255, 0, 0.1); */
       box-shadow: 0 0 4em .7em rgba(0, 255, 0, 0.3), 0 0 7em 2em rgba(0, 255, 0, 0.2), 0 0 10em 4em rgba(0, 255, 0, 0.1);
     }
   }
 
   @keyframes red-pulse {
     0% {
-      /* box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.3), 0 0 30px 10px rgba(255, 0, 0, 0.2), 0 0 45px 15px rgba(255, 0, 0, 0.1); */
       box-shadow: 0 0 1em .3em rgba(255, 0, 0, 0.3), 0 0 2em .7em rgba(255, 0, 0, 0.2), 0 0 3em 1em rgba(255, 0, 0, 0.1);
     }
     100% {
-      /* box-shadow: 0 0 60px 10px rgba(255, 0, 0, 0.3), 0 0 100px 30px rgba(255, 0, 0, 0.2), 0 0 150px 60px rgba(255, 0, 0, 0.1); */
       box-shadow: 0 0 4em .7em rgba(255, 0, 0, 0.3), 0 0 7em 2em rgba(255, 0, 0, 0.2), 0 0 10em 4em rgba(255, 0, 0, 0.1);
     }
   }
