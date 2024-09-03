@@ -1,3 +1,5 @@
+const plugin = require('tailwindcss/plugin');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -66,16 +68,45 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "green-pulse": {
+          "0%": {
+            boxShadow: "0 0 1em .3em rgba(0, 255, 0, 0.3), 0 0 2em .7em rgba(0, 255, 0, 0.2), 0 0 3em 1em rgba(0, 255, 0, 0.1)",
+          },
+          "100%": {
+            boxShadow: "box-shadow: 0 0 4em .7em rgba(0, 255, 0, 0.3), 0 0 7em 2em rgba(0, 255, 0, 0.2), 0 0 10em 4em rgba(0, 255, 0, 0.1)",
+          },
+        },
+        "red-pulse": {
+          "0%": {
+            boxShadow: "0 0 1em .3em rgba(255, 0, 0, 0.3), 0 0 2em .7em rgba(255, 0, 0, 0.2), 0 0 3em 1em rgba(255, 0, 0, 0.1)",
+          },
+          "100%": {
+            boxShadow: "0 0 4em .7em rgba(255, 0, 0, 0.3), 0 0 7em 2em rgba(255, 0, 0, 0.2), 0 0 10em 4em rgba(255, 0, 0, 0.1)",
+          },
+        },
+        flicker: {
+          "0%": {
+            opacity: 1,
+          },
+          "50%": {
+            opacity: 0.97,
+          },
+          "100%": {
+            opacity: 1,
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "green-pulse": "flicker 0.1s infinite, green-pulse ease-in-out 1s infinite alternate",
+        "red-pulse": "flicker 0.1s infinite, red-pulse ease-in-out 1s infinite alternate-reverse",
       },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
-    require('tailwindcss/plugin')(function ({ addVariant }) {
+    plugin(function ({ addVariant }) {
       // @ts-ignore
       addVariant('em', ({ container }) => {
         container.walkRules(rule => {
@@ -86,5 +117,51 @@ module.exports = {
         });
       });
     }),
+    plugin(function ({ addComponents, config }) {
+      addComponents({
+        '.led-green': {
+          background: 'radial-gradient(circle at 50% 50%, #00ff00, #006600)',
+        },
+        '.led-red': {
+          background: 'radial-gradient(circle at 50% 50%, #ff0000, #660000)',
+        },
+        '.led-light': {
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          position: 'relative',
+          border: 'red',
+          zIndex: '1',
+          transition: 'all 0.3s ease',
+          '&::before': {
+            content: "''",
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            right: '0',
+            bottom: '0',
+            borderRadius: '50%',
+            opacity: '0.8',
+            transition: 'all 0.3s ease',
+          },
+          '&::after': {
+            content: "''",
+            position: 'absolute',
+            top: '15%',
+            left: '15%',
+            width: '30%',
+            height: '30%',
+            borderRadius: '50%',
+            background: `radial-gradient(
+              circle at 50% 50%,
+              rgba(255, 255, 255, 0.8),
+              rgba(255, 255, 255, 0.2)
+            )`,
+            filter: 'blur(2px)',
+            transition: 'all 0.3s ease',
+          },
+        }
+      });
+    }),
   ],
-}
+};
