@@ -208,7 +208,47 @@ module.exports = {
             filter: 'blur(24px)',
             opacity: '0.9',
           },
-        }
+        },
+        ".bg-wood": {
+          backgroundImage: `
+            repeating-linear-gradient(
+              90deg,
+              rgba(255, 255, 255, 0.1) 0px,
+              rgba(255, 255, 255, 0.1) 1px,
+              transparent 1px,
+              transparent 15px
+            ),
+            repeating-linear-gradient(
+              0deg,
+              rgba(255, 255, 255, 0.1) 0px,
+              rgba(255, 255, 255, 0.1) 1px,
+              transparent 1px,
+              transparent 15px
+            ),
+            linear-gradient(45deg, #4a3520, #6b4d30)
+          `,
+        },
+        ".bg-circuit": {
+          backgroundColor: "#1a5c1a",
+          backgroundImage: `
+            linear-gradient(
+              90deg,
+              rgba(255, 255, 255, 0.1) 1px,
+              transparent 1px
+            ),
+            linear-gradient(
+              0deg,
+              rgba(255, 255, 255, 0.1) 1px,
+              transparent 1px
+            );
+          `,
+          backgroundSize: "10px 10px",
+          position: "relative",
+          overflow: "hidden",
+        },
+
+
+
       });
     }),
   ],
