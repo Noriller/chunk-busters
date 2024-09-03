@@ -95,6 +95,17 @@ module.exports = {
             opacity: 1,
           },
         },
+        shadow: {
+          "0%": {
+            backgroundPosition: "0 0",
+          },
+          "50%": {
+            backgroundPosition: "200% 0",
+          },
+          "100%": {
+            backgroundPosition: "0 0",
+          },
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -159,6 +170,43 @@ module.exports = {
             )`,
             filter: 'blur(2px)',
             transition: 'all 0.3s ease',
+          },
+        },
+        /** https://codepen.io/fronthendrik/pen/RYOVzP */
+        '.rainbow-shadow': {
+          background: 'linear-gradient(0deg, #000, #262626)',
+          '&::before,&::after': {
+            content: "''",
+            position: 'absolute',
+            top: '-2px',
+            left: '-2px',
+            width: 'calc(100% + 4px)',
+            height: 'calc(100% + 4px)',
+            background: `linear-gradient(
+              45deg,
+              #fb0094,
+              #0000ff,
+              #00ff00,
+              #ffff00,
+              #ff0000,
+              #fb0094,
+              #0000ff,
+              #00ff00,
+              #ffff00,
+              #ff0000
+            )`,
+            backgroundSize: '400%',
+            zIndex: '-1',
+            borderRadius: 'var(--radius)',
+            animation: 'shadow 20s linear infinite',
+          },
+          '&::after': {
+            top: '-8px',
+            left: '-8px',
+            width: 'calc(100% + 16px)',
+            height: 'calc(100% + 16px)',
+            filter: 'blur(24px)',
+            opacity: '0.9',
           },
         }
       });
