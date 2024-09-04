@@ -6,7 +6,7 @@ export default function App() {
       <h1 className="mb-8 text-3xl font-bold text-white">
         Chunk-Busters: Don't cross the streams!
       </h1>
-      <div className="rainbow-shadow relative z-0 aspect-square h-full max-h-[90vmin] max-w-[90vmin]">
+      <div className="h-full max-h-[90vmin] max-w-[90vmin]">
         <Board />
       </div>
     </div>

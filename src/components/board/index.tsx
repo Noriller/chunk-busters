@@ -5,10 +5,12 @@ export function Board() {
   const board = useBoards();
 
   return (
-    <div className="bg-wood grid h-full w-full grid-cols-3 grid-rows-3 gap-[2%] rounded-lg p-[2%]">
-      {Object.values(board).map((mini, i) => (
-        <MiniBoard key={i} lights={Object.values(mini)} />
-      ))}
+    <div className="rainbow-shadow relative z-0 aspect-square h-full">
+      <div className="bg-wood grid h-full w-full grid-cols-3 grid-rows-3 gap-[2%] rounded-lg p-[2%]">
+        {Object.values(board).map((mini, i) => (
+          <MiniBoard key={i} lights={Object.values(mini)} />
+        ))}
+      </div>
     </div>
   );
 }

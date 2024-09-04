@@ -112,6 +112,7 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "green-pulse": "flicker 0.1s infinite, green-pulse ease-in-out 1s infinite alternate",
         "red-pulse": "flicker 0.1s infinite, red-pulse ease-in-out 1s infinite alternate-reverse",
+        "shadow": "shadow 20s ease-in-out infinite",
       },
     },
   },
@@ -128,7 +129,7 @@ module.exports = {
         });
       });
     }),
-    plugin(function ({ addComponents, config }) {
+    plugin(function ({ addComponents, theme }) {
       addComponents({
         '.led-green': {
           background: 'radial-gradient(circle at 50% 50%, #00ff00, #006600)',
@@ -198,7 +199,7 @@ module.exports = {
             backgroundSize: '400%',
             zIndex: '-1',
             borderRadius: 'var(--radius)',
-            animation: 'shadow 20s linear infinite',
+            "@apply animate-shadow": {},
           },
           '&::after': {
             top: '-8px',
@@ -246,9 +247,6 @@ module.exports = {
           position: "relative",
           overflow: "hidden",
         },
-
-
-
       });
     }),
   ],
