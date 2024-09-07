@@ -22,7 +22,7 @@ export function useBoards() {
         lights[randomIndex()][randomIndex()] = random();
         return { ...lights };
       });
-    }, 10);
+    }, 100);
 
     return () => clearInterval(interval);
   }, []);
