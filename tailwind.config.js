@@ -105,7 +105,12 @@ module.exports = {
           "100%": {
             backgroundPosition: "0 0",
           },
-        }
+        },
+        'rainbow-move': {
+          '0%': { transform: 'translateX(-100%)' },
+          '50%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0%)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -113,6 +118,7 @@ module.exports = {
         "green-pulse": "flicker 0.1s infinite, green-pulse ease-in-out 1s infinite alternate",
         "red-pulse": "flicker 0.1s infinite, red-pulse ease-in-out 1s infinite alternate-reverse",
         "shadow": "shadow 20s ease-in-out infinite",
+        'rainbow-move': 'rainbow-move 5s linear infinite alternate',
       },
     },
   },
