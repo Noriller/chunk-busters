@@ -1,7 +1,7 @@
 import { Led } from './led';
-import { useBoards } from './useBoards';
+import { useRandomBoards } from './useBoards';
 
-export function Board({ board = useBoards() }) {
+export function Board({ board = useRandomBoards() }) {
   return (
     <div className="rainbow-shadow relative z-0 aspect-square h-full">
       <div className="bg-wood grid h-full w-full grid-cols-3 grid-rows-3 gap-[2%] rounded-lg p-[2%]">

@@ -13,7 +13,7 @@ function makeLights(fn = random) {
 
 const randomIndex = () => Math.floor(Math.random() * 9) as Indexes;
 
-export function useBoards() {
+export function useRandomBoards() {
   const { lights, toggle } = useLights(makeLights(makeLights));
 
   useEffect(() => {
