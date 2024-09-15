@@ -1,7 +1,7 @@
 // @ts-check
 import http from 'node:http';
 
-const server = http.createServer(async (req, res) => {
+http.createServer(async (req, res) => {
   if (
     // in case of opening from browser
     req.url === '/favicon.ico'
@@ -12,15 +12,16 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  // example: http://localhost:58080/{max POW}/{slug to print}/{delay in ms}
-  const [, number, slug, delay = undefined] = req.url?.split('/') || [];
+  console.log(`🚀 ~ server ~ req.url:`, req.url);
+
+  // example: http://localhost:58080/{slug to print}/{max POW}/{delay in ms}
+  const [, slug, number = 1, delay = undefined] = req.url?.split('/') || [];
 
   const max = Number(number) ? eval('1e' + number) : 1e1;
-  const slugFinal = slug || number;
 
-  console.log(`🚀 ~ server: Starting`, { slug: slugFinal, max, delay });
+  console.log(`🚀 ~ server: Starting`, { slug, max, delay });
 
-  const dataGenerator = infiniteData(slugFinal);
+  const dataGenerator = infiniteData(slug);
 
   let isOpen = true;
   req.on('close', () => {
@@ -43,7 +44,7 @@ const server = http.createServer(async (req, res) => {
     res.write(data);
   }
 
-  console.log(`🚀 ~ server ~ Ending at ${isOpen ? i - 1 : i}`, { slug: slugFinal, max, delay });
+  console.log(`🚀 ~ server ~ Ending at ${isOpen ? i - 1 : i}`, { slug, max, delay });
   return res.end();
 })
   .listen(process.env.PORT || 58080);
