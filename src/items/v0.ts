@@ -9,11 +9,21 @@ const goFetch = (api: number, size?: number, delay?: number) => {
   return fetch(cleanedUrl).then(res => res.text());
 };
 
-const multiFetch = async (
+// this is a bit of a hack to get it to run the example
+// this allows for it to run in a loop and stop after leaving
+let mounted = true;
+const getMounted = () => mounted;
+
+export const multiFetch = async (
   setLights: React.Dispatch<React.SetStateAction<BoardLights>>,
+  getMounted: () => boolean,
   size?: number,
   delay?: number
 ) => {
+  if (!getMounted()) {
+    return;
+  }
+
   const fetch1 = await goFetch(1, size, delay);
   parseAndToggleOnce(fetch1, setLights);
 
@@ -41,17 +51,25 @@ const multiFetch = async (
   const fetch9 = await goFetch(9, size, delay);
   parseAndToggleOnce(fetch9, setLights);
 
-  setTimeout(() => {
+  const timeout = setTimeout(() => {
+    clearTimeout(timeout);
     setLights(makeOffBoard());
-    multiFetch(setLights, size, delay);
-  }, 1000);
+    if (getMounted()) {
+      multiFetch(setLights, getMounted, size, delay);
+    }
+  }, 2000);
 };
 
 const boardHook: NavItem['boardHook'] = () => {
+  mounted = true;
   const [lights, setLighs] = useState(makeOffBoard());
 
   useEffect(() => {
-    multiFetch(setLighs, 2, 10);
+    multiFetch(setLighs, getMounted, 2, 10);
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return lights;
