@@ -1,20 +1,25 @@
 import { useState, useEffect, useCallback } from 'react';
 
-type Indexes = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+export type Indexes = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 const random = () => Math.random() > 0.5;
 
 function makeLights<T = boolean>(fn?: () => T): Record<Indexes, T>;
 function makeLights(fn = random) {
   return Object.fromEntries(
-    Array.from({ length: 9 }).map((_, i) => [i as Indexes, fn()]),
+    Array.from({ length: 9 }).map((_, i) => [(i + 1) as Indexes, fn()]),
   );
 }
 
-const randomIndex = () => Math.floor(Math.random() * 9) as Indexes;
+const makeRandomBoard = (): BoardLights => makeLights(makeLights);
+export function makeOffBoard(): BoardLights {
+  return makeLights(() => makeLights(() => false));
+}
+
+const randomIndex = () => Math.floor(Math.random() * 10) as Indexes;
 
 export function useRandomBoards() {
-  const { lights, toggle } = useLights(makeLights(makeLights));
+  const { lights, toggle } = useLights(makeRandomBoard());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,24 +32,26 @@ export function useRandomBoards() {
   return lights;
 }
 
-function useLights(init: Record<Indexes, Record<Indexes, boolean>>) {
+export function isIndexValid(val: number): val is Indexes {
+  return val !== undefined && val > 0 && val <= 9;
+}
+
+export type BoardLights = Record<Indexes, Record<Indexes, boolean>>;
+
+export function useLights(init: BoardLights) {
   const [lights, setLights] = useState(init);
 
-  const toggle = useCallback((board: Indexes, light: Indexes, on?: boolean) => {
-    if (
-      board === undefined ||
-      light === undefined ||
-      board < 0 ||
-      board > 8 ||
-      light < 0 ||
-      light > 8
-    ) {
+  const toggle = useCallback((board: number, light: number, on?: boolean) => {
+    if (!isIndexValid(board) || !isIndexValid(light)) {
       return;
     }
 
     return setLights((lights) => {
       lights[board][light] = on ?? !lights[board][light];
-      return { ...lights };
+      return {
+        ...lights,
+        [board]: { ...lights[board] },
+      };
     });
   }, []);
 

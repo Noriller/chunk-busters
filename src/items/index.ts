@@ -11,7 +11,7 @@ export type NavItem = {
 export const navItems = [
   v0,
   // Add more navigation items to demonstrate scrolling
-  ...Array.from({ length: 20 }, (_, i) => ({
+  ...Array.from({ length: 10 }, (_, i) => ({
     id: `${i}`,
     title: `Navigation ${i}`,
     content: `Content for Navigation ${i}`,
