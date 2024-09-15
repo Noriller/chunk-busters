@@ -124,6 +124,7 @@ module.exports = {
   },
   plugins: [
     require("tailwindcss-animate"),
+    require('@tailwindcss/typography'),
     plugin(function ({ addVariant }) {
       // @ts-ignore
       addVariant('em', ({ container }) => {

@@ -1,8 +1,9 @@
-import { useCallback, useState } from 'react';
-import { useRandomBoards } from './board/useBoards';
-import { Button } from './ui/button';
 import { navItems } from '@/items';
+import { useCallback, useMemo, useState } from 'react';
 import { Board } from './board';
+import { useRandomBoards } from './board/useBoards';
+import { HighlightedMarkdown } from './HighlightedMarkdown';
+import { Button } from './ui/button';
 
 function useSearchParams(spName: string) {
   const sp = new URLSearchParams(window.location.search);
@@ -45,7 +46,21 @@ function useSearchParamsState(
 export function useNav() {
   const [activeNav, setActiveNav] = useSearchParamsState('nav', 'v1');
 
-  const navContent = navItems.find((item) => item.id === activeNav)?.content;
+  const navContent = useMemo(
+    () => (
+      <HighlightedMarkdown>
+        {navItems.find((item) => item.id === activeNav)?.content ??
+          /*md*/ `
+## Nothing to See Here!
+
+Try a **different** navigation item.
+
+What you're seeing is just a _placeholder board_.
+`}
+      </HighlightedMarkdown>
+    ),
+    [activeNav],
+  );
 
   const changeActiveNav = useCallback((id: string) => {
     if (navItems.find((item) => item.id === id)) {
@@ -74,5 +89,9 @@ export function useNav() {
     return <Board board={boardHook()} />;
   }, [boardHook]);
 
-  return { navContent, NavButtons, Board: BoardWithHook };
+  return {
+    navContent,
+    NavButtons,
+    Board: BoardWithHook,
+  };
 }
