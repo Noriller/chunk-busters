@@ -43,24 +43,38 @@ function useSearchParamsState(
   return [state, update] as const;
 }
 
-export function useNav() {
-  const [activeNav, setActiveNav] = useSearchParamsState('nav', 'v1');
-
-  const navContent = useMemo(
-    () => (
-      <HighlightedMarkdown>
-        {navItems.find((item) => item.id === activeNav)?.content ??
-          /*md*/ `
+const notFound = /*md*/ `
 ## Nothing to See Here!
 
 Try a **different** navigation item.
 
 What you're seeing is just a _placeholder board_.
-`}
-      </HighlightedMarkdown>
-    ),
-    [activeNav],
-  );
+`;
+
+const home = /*md*/ `
+## Home
+
+What you're seeing is just a _placeholder board_ (_Cool Right?_).
+
+Start at the **v0** to check even crazier things. **=D**
+`;
+
+export function useNav() {
+  const [activeNav, setActiveNav] = useSearchParamsState('nav', 'home');
+
+  const navContent = useMemo(() => {
+    const getContent = () => {
+      if (activeNav === 'home') {
+        return home;
+      }
+
+      return (
+        navItems.find((item) => item.id === activeNav)?.content ?? notFound
+      );
+    };
+
+    return <HighlightedMarkdown>{getContent()}</HighlightedMarkdown>;
+  }, [activeNav]);
 
   const changeActiveNav = useCallback((id: string) => {
     if (navItems.find((item) => item.id === id)) {
