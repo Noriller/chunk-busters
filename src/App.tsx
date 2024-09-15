@@ -1,10 +1,9 @@
-import { Board } from './components/board';
 import { FancyTitle } from './components/fancyTitle';
 import { ScrollArea } from './components/ui/scroll-area';
 import { useNav } from './components/useNav';
 
 export default function BoardDemo() {
-  const { navContent, NavButtons, boardHook } = useNav();
+  const { navContent, NavButtons, Board } = useNav();
 
   return (
     <div className="block h-full min-h-screen bg-primary text-primary-foreground 2xl:flex 2xl:h-screen">
@@ -23,7 +22,7 @@ export default function BoardDemo() {
       </div>
       <div className="w-full max-2xl:max-w-[min(90vh,95vw)] max-2xl:p-8 2xl:m-4 2xl:mr-6 2xl:mt-0">
         <div className="mt-6 h-full max-h-[95vmin] max-w-[95vmin]">
-          <Board board={boardHook()} />
+          <Board />
         </div>
       </div>
     </div>
