@@ -16,7 +16,9 @@ const boardHook = () => {
     setMounted(true);
     const controller = new AbortController();
 
-    multiFetch(controller.signal);
+    multiFetch(controller.signal).catch(() => {
+      /** intentionally blank */
+    });
 
     return () => {
       setMounted(false);
