@@ -1,8 +1,9 @@
 import { FancyTitle } from './components/fancyTitle';
+import { SpeedContextProvider } from './components/SpeedContext';
 import { ScrollArea } from './components/ui/scroll-area';
 import { useNav } from './components/useNav';
 
-export default function BoardDemo() {
+function BoardDemo() {
   const { navContent, NavButtons, Board } = useNav();
 
   return (
@@ -30,3 +31,9 @@ export default function BoardDemo() {
     </div>
   );
 }
+
+export default () => (
+  <SpeedContextProvider>
+    <BoardDemo />
+  </SpeedContextProvider>
+);

@@ -1,47 +1,11 @@
 import { navItems } from '@/items';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Board } from './board';
 import { useRandomBoards } from './board/useBoards';
 import { HighlightedMarkdown } from './HighlightedMarkdown';
 import { Button } from './ui/button';
-
-function useSearchParams(spName: string) {
-  const sp = new URLSearchParams(window.location.search);
-  const get = () => sp.get(spName);
-
-  const set = useCallback(
-    (value: string | null) => {
-      if (value === null) {
-        sp.delete(spName);
-      } else {
-        sp.set(spName, value);
-      }
-
-      window.history.pushState(
-        {},
-        '',
-        `${window.location.pathname}?${sp.toString()}`,
-      );
-    },
-    [spName],
-  );
-
-  return [get, set] as const;
-}
-
-function useSearchParamsState(
-  spName: string,
-  defaultValue: string | null = null,
-) {
-  const [get, set] = useSearchParams(spName);
-  const [state, setState] = useState(get() || defaultValue);
-  const update = useCallback((value: string | null) => {
-    setState(value);
-    set(String(value));
-  }, []);
-
-  return [state, update] as const;
-}
+import { useSpeed } from './SpeedContext';
+import { useSearchParamsState } from './useSearchParamsState';
 
 const notFound = /*md*/ `
 ## Nothing to See Here!
@@ -59,22 +23,41 @@ What you're seeing is just a _placeholder board_ (_Cool Right?_).
 Start at the **v0** to check even crazier things. **=D**
 `;
 
+const defaultsContent = {
+  home,
+  notFound,
+} as const;
+
 export function useNav() {
   const [activeNav, setActiveNav] = useSearchParamsState('nav', 'home');
+  const { speed, SpeedSwitcher } = useSpeed();
 
   const navContent = useMemo(() => {
     const getContent = () => {
       if (activeNav === 'home') {
-        return home;
+        return { type: 'home' } as const;
       }
 
       return (
-        navItems.find((item) => item.id === activeNav)?.content ?? notFound
+        navItems.find((item) => item.id === activeNav)?.content ?? {
+          type: 'notFound' as const,
+        }
       );
     };
 
-    return <HighlightedMarkdown>{getContent()}</HighlightedMarkdown>;
-  }, [activeNav]);
+    const content = getContent();
+
+    return (
+      <>
+        <HighlightedMarkdown>
+          {typeof content === 'string'
+            ? content
+            : defaultsContent[content.type]}
+        </HighlightedMarkdown>
+        {typeof content === 'string' && SpeedSwitcher}
+      </>
+    );
+  }, [activeNav, speed]);
 
   const changeActiveNav = useCallback((id: string) => {
     if (navItems.find((item) => item.id === id)) {
@@ -100,8 +83,8 @@ export function useNav() {
     useRandomBoards;
 
   const BoardWithHook = useCallback(() => {
-    return <Board board={boardHook()} />;
-  }, [boardHook]);
+    return <Board board={boardHook()} key={speed.toString()} />;
+  }, [boardHook, speed]);
 
   return {
     navContent,

@@ -1,4 +1,4 @@
-import { BoardLights, isIndexValid } from '@/components/board/useBoards';
+import { type BoardLights, isIndexValid } from '@/components/board/useBoards';
 
 export function parseLine(str: string) {
   const [board, light] = str.split(' ');
