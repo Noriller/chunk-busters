@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview --host",
-    "service:up": "docker compose -f ./server/compose.yml up"
+    "service:dev": "docker compose -f ./server/compose.yml up --watch --build --force-recreate --remove-orphans",
+    "service:down": "docker compose -f ./server/compose.yml down"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.0",

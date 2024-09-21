@@ -47,7 +47,9 @@ http.createServer(async (req, res) => {
   console.log(`🚀 ~ server ~ Ending at ${isOpen ? i - 1 : i}`, { slug, max, delay });
   return res.end();
 })
-  .listen(process.env.PORT || 58080);
+  .listen(process.env.PORT || 58080, () => {
+    console.log(`🚀 ~ server ~ listening on port ${process.env.PORT || 58080}`);
+  });
 
 function* infiniteData(
   /** @type {string} */ slug,
