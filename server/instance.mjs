@@ -39,7 +39,7 @@ http.createServer(async (req, res) => {
     }
     // some random delay is added to simulate real conditions
     // of generating/retrieving data
-    // it will sleep between 0 and delay ms
+    // it will sleep between delay ms +/- 50%
     await Sleep(delay ? Number(delay) : undefined);
     res.write(data);
   }
@@ -70,11 +70,15 @@ function* infiniteData(
   }
 }
 
+const randomBetween = (/** @type {number} */ min, /** @type {number} */ max) => {
+  return Math.floor(Math.random() * (max - min) + min);
+};
+
 /**
- * Force sleep for a random amount of time between 0 and max
+ * Force sleep for a random amount of time between +/- 50% of max
  */
 const Sleep = (max = 10) => new Promise((res) => {
   setTimeout(() => {
     res(null);
-  }, Math.floor(Math.random() * max));
+  }, randomBetween(max * 0.5, max * 1.5));
 });
