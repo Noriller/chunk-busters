@@ -1,6 +1,7 @@
 import { useRandomBoards } from '@/components/board/useBoards';
 import { v0 } from './v0';
 import { v1 } from './v1';
+import { v2 } from './v2';
 
 export type NavItem = {
   id: string;
@@ -12,6 +13,7 @@ export type NavItem = {
 export const navItems = [
   v0,
   v1,
+  v2,
   // Add more navigation items to demonstrate scrolling
   ...Array.from({ length: 10 }, (_, i) => ({
     id: `${i}`,
