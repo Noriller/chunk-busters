@@ -1,11 +1,12 @@
 import { useCallback, useState } from 'react';
 
 function useSearchParams(spName: string) {
-  const sp = new URLSearchParams(window.location.search);
-  const get = () => sp.get(spName);
+  const getSp = () => new URLSearchParams(window.location.search);
+  const get = () => getSp().get(spName);
 
   const set = useCallback(
     (value: string | null) => {
+      const sp = getSp();
       if (value === null) {
         sp.delete(spName);
       } else {
