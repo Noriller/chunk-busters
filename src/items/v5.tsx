@@ -10,7 +10,7 @@ const boardHook = () => {
   const [lights, setLights] = useState(makeOffBoard());
   const { speed } = useSpeed();
 
-  const multiFetch = useMultiFetch(setLights, getMounted, 2);
+  const multiFetch = useParallelFetch(setLights, getMounted, 2);
 
   useEffect(() => {
     setMounted(true);
@@ -62,27 +62,21 @@ _Let's hope the computer can handle that..._
   boardHook,
 } satisfies NavItem;
 
-export const useMultiFetch = (
+export const useParallelFetch = (
   setLights: React.Dispatch<React.SetStateAction<BoardLights>>,
   getMounted: () => boolean,
   size?: number,
 ) => {
-  const getApi = useStreamFetchApi(setLights, 4);
+  const getApi = useStreamFetchApi(setLights, size);
 
   async function doMultiFetch(signal: AbortSignal, newSize = size) {
     if (!getMounted()) {
       return;
     }
 
-    await getApi(1, signal);
-    await getApi(2, signal);
-    await getApi(3, signal);
-    await getApi(4, signal);
-    await getApi(5, signal);
-    await getApi(6, signal);
-    await getApi(7, signal);
-    await getApi(8, signal);
-    await getApi(9, signal);
+    await Promise.all(
+      Array.from({ length: 9 }, (_, i) => getApi(i + 1, signal)),
+    );
 
     const timeout = setTimeout(() => {
       clearTimeout(timeout);

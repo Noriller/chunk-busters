@@ -64,7 +64,7 @@ export const useMultiFetch = (
   getMounted: () => boolean,
   size?: number,
 ) => {
-  const getApi = useStreamFetchApi(setLights, 2);
+  const getApi = useStreamFetchApi(setLights, size);
 
   async function doMultiFetch(signal: AbortSignal, newSize = size) {
     if (!getMounted()) {

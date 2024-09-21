@@ -4,6 +4,7 @@ import { v1 } from './v1';
 import { v2 } from './v2';
 import { v3 } from './v3';
 import { v4 } from './v4';
+import { v5 } from './v5';
 
 export type NavItem = {
   id: string;
@@ -18,6 +19,7 @@ export const navItems = [
   v2,
   v3,
   v4,
+  v5,
   // Add more navigation items to demonstrate scrolling
   ...Array.from({ length: 2 }, (_, i) => ({
     id: `${i}`,

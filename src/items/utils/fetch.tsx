@@ -64,6 +64,7 @@ export const useStreamFetchApi = (setLights: SetLights, size?: number) => {
         const { done, value } = await reader.read();
 
         if (done || signal.aborted) {
+          reader.cancel(signal.reason);
           break;
         }
 
@@ -74,6 +75,8 @@ export const useStreamFetchApi = (setLights: SetLights, size?: number) => {
           );
         }
       }
+    }).catch(() => {
+      /** intentionally blank */
     });
 };
 
