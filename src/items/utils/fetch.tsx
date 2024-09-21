@@ -3,12 +3,21 @@ import { parseAndToggleOnce } from './parseLine';
 import { useSpeed } from '@/components/SpeedContext';
 import { useCallback } from 'react';
 
-const useFetchApi = (size?: number) => {
+/**
+ * @param speedHack http max parallel connections is 6 for most modern browsers  
+ * so, we hack here so make it feels like we are doing more requests  
+ * remember: this is just a demo, will be a presentation...  
+ * ...and going forward we will show this problem and why  
+ * calling multiple times in parallel is a bad approach
+ */
+export const useFetchApi = (size?: number, speedHack = false) => {
   const { speed } = useSpeed();
 
   const getUrl = useCallback(
     (api: number) => {
-      const delay = typeof speed === 'function' ? speed() : speed;
+      const delay = Math.floor(
+        (typeof speed === 'function' ? speed() : speed) / (speedHack ? 2 : 1),
+      );
 
       const url = new URL(
         `http://localhost/api/${api}/${size ?? ''}/${delay ?? ''}`,
