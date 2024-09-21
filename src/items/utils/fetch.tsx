@@ -75,8 +75,6 @@ export const useStreamFetchApi = (setLights: SetLights, size?: number) => {
           );
         }
       }
-    }).catch(() => {
-      /** intentionally blank */
     });
 };
 
