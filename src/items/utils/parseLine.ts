@@ -5,11 +5,16 @@ export function parseLine(str: string) {
   return { board: Number(board), light: Number(light) };
 }
 
-export function parseWholeString(str: string): {
-  result: { board: number; light: number; }[];
+type ParsedLine = ReturnType<typeof parseLine>;
+
+type ParsedReturn = {
+  result: ParsedLine[];
   remaining: string;
   done: boolean;
-} {
+};
+
+
+export function parseWholeString(str: string): ParsedReturn {
   if (!str || !str.includes('\n')) {
     return {
       result: [],
@@ -18,9 +23,11 @@ export function parseWholeString(str: string): {
     };
   }
 
-  const [line, ...rest] = str.split('\n');
+  const separatorIndex = str.indexOf('\n');
+  const line = str.slice(0, separatorIndex);
+  const rest = str.slice(separatorIndex + 1);
 
-  const { result, remaining, done } = parseWholeString(rest.join('\n'));
+  const { result, remaining, done } = parseWholeString(rest);
   return {
     result: [...result, parseLine(line)],
     remaining,
@@ -28,13 +35,10 @@ export function parseWholeString(str: string): {
   };
 }
 
+export function accumulateValues(values: ParsedLine | ParsedLine[], init = {} as BoardLights) {
+  const arr = Array.isArray(values) ? values : [values];
 
-export function parseAndToggleOnce(
-  str: string,
-  setLights: React.Dispatch<React.SetStateAction<BoardLights>>,
-) {
-  const parsed = parseWholeString(str)
-    .result
+  return arr
     .map(({ board, light }) => {
       return [board, light];
     })
@@ -49,46 +53,91 @@ export function parseAndToggleOnce(
       }
       return acc;
 
-    }, {} as BoardLights);
+    }, init);
+}
+
+export type SetLights = React.Dispatch<React.SetStateAction<BoardLights>>;
+
+export function parseAndToggleOnce(
+  str: string,
+  setLights: SetLights,
+) {
+  const parsed = parseWholeString(str).result;
+
+  const values = accumulateValues(parsed);
 
   setLights((old) => {
     return {
       1: {
         ...old[1],
-        ...parsed[1],
+        ...values[1],
       },
       2: {
         ...old[2],
-        ...parsed[2],
+        ...values[2],
       },
       3: {
         ...old[3],
-        ...parsed[3],
+        ...values[3],
       },
       4: {
         ...old[4],
-        ...parsed[4],
+        ...values[4],
       },
       5: {
         ...old[5],
-        ...parsed[5],
+        ...values[5],
       },
       6: {
         ...old[6],
-        ...parsed[6],
+        ...values[6],
       },
       7: {
         ...old[7],
-        ...parsed[7],
+        ...values[7],
       },
       8: {
         ...old[8],
-        ...parsed[8],
+        ...values[8],
       },
       9: {
         ...old[9],
-        ...parsed[9],
+        ...values[9],
       },
     };
   });
+}
+
+export function parseToggleAndRemaining(
+  str: string,
+  setLights: SetLights,
+) {
+  const { result, remaining } = parseWholeString(str);
+
+  // trying to parse as many much as possible
+  // was behaving unpredictably, so, changing
+  // this to only toggle one "line" at a time
+  const toggleOne = toggleOneLine(setLights);
+  result.forEach(toggleOne);
+
+  return remaining;
+}
+
+function toggleOneLine(setLights: SetLights) {
+  return ({ board, light }: ParsedLine) => {
+
+    if (!isIndexValid(board) || !isIndexValid(light)) {
+      return;
+    }
+
+    setLights((old) => {
+      return structuredClone({
+        ...old,
+        [board]: {
+          ...old[board],
+          [light]: !old[board][light],
+        }
+      });
+    });
+  };
 }
