@@ -19,7 +19,7 @@ export function HighlightedMarkdown({ children }: { children: string }) {
   return (
     // @ts-ignore
     <div ref={rootRef}>
-      <Markdown>{children}</Markdown>
+      <Markdown key={children}>{children}</Markdown>
     </div>
   );
 }
