@@ -68,7 +68,7 @@ Go to the next one... we have to talk...
   boardHook,
 } satisfies NavItem;
 
-export const useParallelHandleFetch = (
+const useParallelHandleFetch = (
   setLights: React.Dispatch<React.SetStateAction<BoardLights>>,
   getMounted: () => boolean,
   size?: number,

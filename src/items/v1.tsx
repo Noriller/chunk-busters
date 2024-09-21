@@ -71,8 +71,9 @@ export const useParallelFetch = (
   setLights: React.Dispatch<React.SetStateAction<BoardLights>>,
   getMounted: () => boolean,
   size?: number,
+  speedHack = true,
 ) => {
-  const getApi = useFetchApi(size, true);
+  const getApi = useFetchApi(size, speedHack);
   async function doMultiFetch(signal: AbortSignal, newSize = size) {
     if (!getMounted()) {
       return;
