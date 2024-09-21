@@ -1,9 +1,9 @@
-import { makeOffBoard, type BoardLights } from '@/components/board/useBoards';
+import { makeOffBoard } from '@/components/board/useBoards';
 import { useSpeed } from '@/components/SpeedContext';
 import { useEffect, useState } from 'react';
 import { type NavItem } from '.';
 import { mountedHack, useFetchApi } from './utils/fetch';
-import { parseAndToggleOnce } from './utils/parseLine';
+import { parseAndToggleOnce, type SetLights } from './utils/parseLine';
 
 const { getMounted, setMounted } = mountedHack();
 
@@ -68,7 +68,7 @@ No matter how fast the others are, you still have to wait for the slowest to fin
 } satisfies NavItem;
 
 export const useParallelFetch = (
-  setLights: React.Dispatch<React.SetStateAction<BoardLights>>,
+  setLights: SetLights,
   getMounted: () => boolean,
   size?: number,
   speedHack = true,

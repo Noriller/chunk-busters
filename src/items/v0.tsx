@@ -1,9 +1,9 @@
-import { makeOffBoard, type BoardLights } from '@/components/board/useBoards';
+import { makeOffBoard } from '@/components/board/useBoards';
 import { useSpeed } from '@/components/SpeedContext';
 import { useEffect, useState } from 'react';
 import { type NavItem } from '.';
 import { mountedHack, useFetchApi } from './utils/fetch';
-import { parseAndToggleOnce } from './utils/parseLine';
+import { parseAndToggleOnce, type SetLights } from './utils/parseLine';
 
 const { getMounted, setMounted } = mountedHack();
 
@@ -58,7 +58,7 @@ _Are you sure? Like, absolutely sure?_
 } satisfies NavItem;
 
 export const useMultiFetch = (
-  setLights: React.Dispatch<React.SetStateAction<BoardLights>>,
+  setLights: SetLights,
   getMounted: () => boolean,
   size?: number,
 ) => {

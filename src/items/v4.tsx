@@ -1,8 +1,9 @@
-import { makeOffBoard, type BoardLights } from '@/components/board/useBoards';
+import { makeOffBoard } from '@/components/board/useBoards';
 import { useSpeed } from '@/components/SpeedContext';
 import { useEffect, useState } from 'react';
 import { type NavItem } from '.';
 import { mountedHack, useStreamFetchApi } from './utils/fetch';
+import type { SetLights } from './utils/parseLine';
 
 const { getMounted, setMounted } = mountedHack();
 
@@ -60,7 +61,7 @@ but we are not fetching only the ammount of results that you're seeing before!
 } satisfies NavItem;
 
 export const useMultiFetch = (
-  setLights: React.Dispatch<React.SetStateAction<BoardLights>>,
+  setLights: SetLights,
   getMounted: () => boolean,
   size?: number,
 ) => {

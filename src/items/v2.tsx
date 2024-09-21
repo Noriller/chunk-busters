@@ -1,9 +1,9 @@
-import { makeOffBoard, type BoardLights } from '@/components/board/useBoards';
+import { makeOffBoard } from '@/components/board/useBoards';
 import { useSpeed } from '@/components/SpeedContext';
 import { useEffect, useState } from 'react';
 import { type NavItem } from '.';
 import { mountedHack, useFetchApi } from './utils/fetch';
-import { parseAndToggleOnce } from './utils/parseLine';
+import { parseAndToggleOnce, type SetLights } from './utils/parseLine';
 
 const { getMounted, setMounted } = mountedHack();
 
@@ -69,7 +69,7 @@ Go to the next one... we have to talk...
 } satisfies NavItem;
 
 const useParallelHandleFetch = (
-  setLights: React.Dispatch<React.SetStateAction<BoardLights>>,
+  setLights: SetLights,
   getMounted: () => boolean,
   size?: number,
 ) => {
