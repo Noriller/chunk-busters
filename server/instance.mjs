@@ -59,12 +59,14 @@ function* infiniteData(
     return Math.floor(Math.random() * 10);
   }
 
+  const extraPadding = 'this thing is just to make each piece of data bigger '.repeat(100);
+
   while (true) {
     // while this could be an object
     // but we will just use a string
     // to make it easier to parse it
     // split on space and break on \n
-    yield `${slug} ${randomNumber()} \n`;
+    yield `${slug} ${randomNumber()} ${extraPadding} \n`;
   }
 }
 
