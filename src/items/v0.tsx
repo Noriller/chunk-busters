@@ -47,6 +47,11 @@ await fetch3();
 Only then you start rendering.
 
 The main problem: what if the API was slower?
+
+> "Oh... no one actually does that..."
+
+_Are you sure? Like, absolutely sure?_
+
 `,
   boardHook,
 } satisfies NavItem;
