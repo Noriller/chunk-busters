@@ -1,36 +1,7 @@
-import { makeOffBoard } from '@/components/board/useBoards';
-import { useSize } from '@/components/SizeContext';
-import { useSpeed } from '@/components/SpeedContext';
-import { useEffect, useState } from 'react';
+import { makeBoardHook, makeOffBoard } from '@/components/board/useBoards';
 import { type NavItem } from '.';
-import { mountedHack, useFetchApi } from './utils/fetch';
+import { useFetchApi } from './utils/fetch';
 import { parseAndToggleOnce, type SetLights } from './utils/parseLine';
-
-const { getMounted, setMounted } = mountedHack();
-
-const boardHook = () => {
-  const [lights, setLights] = useState(makeOffBoard());
-  const { speed } = useSpeed();
-  const { size } = useSize();
-
-  const multiFetch = useParallelHandleFetch(setLights, getMounted);
-
-  useEffect(() => {
-    setMounted(true);
-    const controller = new AbortController();
-
-    multiFetch(controller.signal).catch(() => {
-      /** intentionally blank */
-    });
-
-    return () => {
-      setMounted(false);
-      controller.abort('unmount');
-    };
-  }, [speed, size]);
-
-  return lights;
-};
 
 export const v2 = {
   id: 'v2',
@@ -67,13 +38,13 @@ This has to be the best way to solve this problem? Right? Right?
 Go to the next one... we have to talk...
 
 `,
-  boardHook,
+  boardHook: makeBoardHook(useParallelHandleFetch),
 } satisfies NavItem;
 
-const useParallelHandleFetch = (
+function useParallelHandleFetch(
   setLights: SetLights,
   getMounted: () => boolean,
-) => {
+) {
   const getApi = useFetchApi();
   async function doMultiFetch(signal: AbortSignal) {
     if (!getMounted()) {
@@ -98,4 +69,4 @@ const useParallelHandleFetch = (
   }
 
   return doMultiFetch;
-};
+}

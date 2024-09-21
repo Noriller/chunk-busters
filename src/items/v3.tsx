@@ -1,36 +1,6 @@
-import { makeOffBoard } from '@/components/board/useBoards';
-import { useSize } from '@/components/SizeContext';
-import { useSpeed } from '@/components/SpeedContext';
-import { useEffect, useState } from 'react';
+import { makeBoardHook } from '@/components/board/useBoards';
 import { type NavItem } from '.';
-import { mountedHack } from './utils/fetch';
 import { useParallelFetch } from './v1';
-
-const { getMounted, setMounted } = mountedHack();
-
-const boardHook = () => {
-  const [lights, setLights] = useState(makeOffBoard());
-  const { speed } = useSpeed();
-  const { size } = useSize();
-
-  const multiFetch = useParallelFetch(setLights, getMounted, false);
-
-  useEffect(() => {
-    setMounted(true);
-    const controller = new AbortController();
-
-    multiFetch(controller.signal).catch(() => {
-      /** intentionally blank */
-    });
-
-    return () => {
-      setMounted(false);
-      controller.abort('unmount');
-    };
-  }, [speed, size]);
-
-  return lights;
-};
 
 export const v3 = {
   id: 'v3',
@@ -74,5 +44,5 @@ Would take the "same amount" of time as if only one batch was being fetched.
 Ok... but then what?
 
 `,
-  boardHook,
+  boardHook: makeBoardHook((...args) => useParallelFetch(...args, false)),
 } satisfies NavItem;

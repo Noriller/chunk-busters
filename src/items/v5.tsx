@@ -1,36 +1,7 @@
-import { makeOffBoard } from '@/components/board/useBoards';
-import { useSize } from '@/components/SizeContext';
-import { useSpeed } from '@/components/SpeedContext';
-import { useEffect, useState } from 'react';
+import { makeBoardHook, makeOffBoard } from '@/components/board/useBoards';
 import { type NavItem } from '.';
-import { mountedHack, useStreamFetchApi } from './utils/fetch';
+import { useStreamFetchApi } from './utils/fetch';
 import type { SetLights } from './utils/parseLine';
-
-const { getMounted, setMounted } = mountedHack();
-
-const boardHook = () => {
-  const [lights, setLights] = useState(makeOffBoard());
-  const { speed } = useSpeed();
-  const { size } = useSize();
-
-  const multiFetch = useParallelFetch(setLights, getMounted);
-
-  useEffect(() => {
-    setMounted(true);
-    const controller = new AbortController();
-
-    multiFetch(controller.signal).catch(() => {
-      /** intentionally blank */
-    });
-
-    return () => {
-      setMounted(false);
-      controller.abort('unmount');
-    };
-  }, [speed, size]);
-
-  return lights;
-};
 
 export const v5 = {
   id: 'v5',
@@ -62,13 +33,13 @@ Again... http/1 means we can't do all 9 fetches in one batch.
 _Let's hope the computer can handle that..._
 
 `,
-  boardHook,
+  boardHook: makeBoardHook(useParallelFetch),
 } satisfies NavItem;
 
-export const useParallelFetch = (
+export function useParallelFetch(
   setLights: SetLights,
   getMounted: () => boolean,
-) => {
+) {
   const getApi = useStreamFetchApi(setLights);
 
   async function doMultiFetch(signal: AbortSignal) {
@@ -90,4 +61,4 @@ export const useParallelFetch = (
   }
 
   return doMultiFetch;
-};
+}

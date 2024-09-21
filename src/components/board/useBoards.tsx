@@ -1,4 +1,8 @@
+import { mountedHack } from '@/items/utils/fetch';
 import { useState, useEffect, useCallback } from 'react';
+import { useSpeed } from '../SpeedContext';
+import { useSize } from '../SizeContext';
+import type { SetLights } from '@/items/utils/parseLine';
 
 export type Indexes = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
@@ -30,6 +34,39 @@ export function useRandomBoards() {
   }, []);
 
   return lights;
+}
+
+const { getMounted, setMounted } = mountedHack();
+
+export function makeBoardHook(
+  createAsyncFunc: (
+    setLights: SetLights,
+    getMountedHack: typeof getMounted,
+  ) => (signal: AbortSignal) => Promise<void>,
+) {
+  return () => {
+    const [lights, setLights] = useState(makeOffBoard());
+    const { speed } = useSpeed();
+    const { size } = useSize();
+
+    const asyncFunc = createAsyncFunc(setLights, getMounted);
+
+    useEffect(() => {
+      setMounted(true);
+      const controller = new AbortController();
+
+      asyncFunc(controller.signal).catch(() => {
+        /** intentionally blank */
+      });
+
+      return () => {
+        setMounted(false);
+        controller.abort('unmount');
+      };
+    }, [speed, size]);
+
+    return lights;
+  };
 }
 
 export function isIndexValid(val: number): val is Indexes {

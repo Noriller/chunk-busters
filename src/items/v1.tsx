@@ -1,36 +1,7 @@
-import { makeOffBoard } from '@/components/board/useBoards';
-import { useSize } from '@/components/SizeContext';
-import { useSpeed } from '@/components/SpeedContext';
-import { useEffect, useState } from 'react';
+import { makeBoardHook, makeOffBoard } from '@/components/board/useBoards';
 import { type NavItem } from '.';
-import { mountedHack, useFetchApi } from './utils/fetch';
+import { useFetchApi } from './utils/fetch';
 import { parseAndToggleOnce, type SetLights } from './utils/parseLine';
-
-const { getMounted, setMounted } = mountedHack();
-
-const boardHook = () => {
-  const [lights, setLights] = useState(makeOffBoard());
-  const { speed } = useSpeed();
-  const { size } = useSize();
-
-  const multiFetch = useParallelFetch(setLights, getMounted);
-
-  useEffect(() => {
-    setMounted(true);
-    const controller = new AbortController();
-
-    multiFetch(controller.signal).catch(() => {
-      /** intentionally blank */
-    });
-
-    return () => {
-      setMounted(false);
-      controller.abort('unmount');
-    };
-  }, [speed, size]);
-
-  return lights;
-};
 
 export const v1 = {
   id: 'v1',
@@ -66,14 +37,14 @@ The main problem: what if you had ONE of those being slow?
 No matter how fast the others are, you still have to wait for the slowest to finish.
 
 `,
-  boardHook,
+  boardHook: makeBoardHook(useParallelFetch),
 } satisfies NavItem;
 
-export const useParallelFetch = (
+export function useParallelFetch(
   setLights: SetLights,
   getMounted: () => boolean,
   speedHack = true,
-) => {
+) {
   const getApi = useFetchApi(speedHack);
   async function doMultiFetch(signal: AbortSignal) {
     if (!getMounted()) {
@@ -96,4 +67,4 @@ export const useParallelFetch = (
   }
 
   return doMultiFetch;
-};
+}
