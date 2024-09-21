@@ -1,6 +1,7 @@
 import { useSpeed } from '@/components/SpeedContext';
 import { useCallback } from 'react';
 import { parseToggleAndRemaining, type SetLights } from './parseLine';
+import { useSize } from '@/components/SizeContext';
 
 /**
  * @param speedHack http max parallel connections is 6 for most modern browsers
@@ -9,21 +10,23 @@ import { parseToggleAndRemaining, type SetLights } from './parseLine';
  * ...and going forward we will show this problem and why
  * calling multiple times in parallel is a bad approach
  */
-export const useFetchApi = (size?: number, speedHack = false) => {
+export const useFetchApi = (speedHack = false) => {
   const { speed } = useSpeed();
+  const { size: baseSize } = useSize();
 
   const getUrl = useCallback(
     (api: number) => {
       const delay = Math.floor(
         (typeof speed === 'function' ? speed() : speed) / (speedHack ? 2 : 1),
       );
+      const size = typeof baseSize === 'function' ? baseSize() : baseSize;
 
       const url = new URL(
         `http://localhost/api/${api}/${size ?? ''}/${delay ?? ''}`,
       );
       return url.toString().replace(/\/+$/, '');
     },
-    [speed, size],
+    [speed, baseSize],
   );
 
   return (api: number, signal: AbortSignal) =>
@@ -32,19 +35,21 @@ export const useFetchApi = (size?: number, speedHack = false) => {
     }).then((res) => res.text());
 };
 
-export const useStreamFetchApi = (setLights: SetLights, size?: number) => {
+export const useStreamFetchApi = (setLights: SetLights) => {
   const { speed } = useSpeed();
+  const { size: baseSize } = useSize();
 
   const getUrl = useCallback(
     (api: number) => {
       const delay = typeof speed === 'function' ? speed() : speed;
+      const size = typeof baseSize === 'function' ? baseSize() : baseSize;
 
       const url = new URL(
         `http://localhost/api/${api}/${size ?? ''}/${delay ?? ''}`,
       );
       return url.toString().replace(/\/+$/, '');
     },
-    [speed, size],
+    [speed, baseSize],
   );
 
   const decoder = new TextDecoder('utf-8');

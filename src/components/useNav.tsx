@@ -6,6 +6,7 @@ import { HighlightedMarkdown } from './HighlightedMarkdown';
 import { Button } from './ui/button';
 import { useSpeed } from './SpeedContext';
 import { useSearchParamsState } from './useSearchParamsState';
+import { useSize } from './SizeContext';
 
 const notFound = /*md*/ `
 ## Nothing to See Here!
@@ -31,6 +32,7 @@ const defaultsContent = {
 export function useNav() {
   const [activeNav, setActiveNav] = useSearchParamsState('nav', 'home');
   const { speed, SpeedSwitcher } = useSpeed();
+  const { size, SizeSwitcher } = useSize();
 
   const navContent = useMemo(() => {
     const getContent = () => {
@@ -55,9 +57,10 @@ export function useNav() {
             : defaultsContent[content.type]}
         </HighlightedMarkdown>
         {typeof content === 'string' && SpeedSwitcher}
+        {typeof content === 'string' && SizeSwitcher}
       </>
     );
-  }, [activeNav, speed]);
+  }, [activeNav, speed, size]);
 
   const changeActiveNav = useCallback((id: string) => {
     if (navItems.find((item) => item.id === id)) {

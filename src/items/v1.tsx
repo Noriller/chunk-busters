@@ -1,4 +1,5 @@
 import { makeOffBoard } from '@/components/board/useBoards';
+import { useSize } from '@/components/SizeContext';
 import { useSpeed } from '@/components/SpeedContext';
 import { useEffect, useState } from 'react';
 import { type NavItem } from '.';
@@ -10,8 +11,9 @@ const { getMounted, setMounted } = mountedHack();
 const boardHook = () => {
   const [lights, setLights] = useState(makeOffBoard());
   const { speed } = useSpeed();
+  const { size } = useSize();
 
-  const multiFetch = useParallelFetch(setLights, getMounted, 2);
+  const multiFetch = useParallelFetch(setLights, getMounted);
 
   useEffect(() => {
     setMounted(true);
@@ -25,7 +27,7 @@ const boardHook = () => {
       setMounted(false);
       controller.abort('unmount');
     };
-  }, [speed]);
+  }, [speed, size]);
 
   return lights;
 };
@@ -70,11 +72,10 @@ No matter how fast the others are, you still have to wait for the slowest to fin
 export const useParallelFetch = (
   setLights: SetLights,
   getMounted: () => boolean,
-  size?: number,
   speedHack = true,
 ) => {
-  const getApi = useFetchApi(size, speedHack);
-  async function doMultiFetch(signal: AbortSignal, newSize = size) {
+  const getApi = useFetchApi(speedHack);
+  async function doMultiFetch(signal: AbortSignal) {
     if (!getMounted()) {
       return;
     }
@@ -89,7 +90,7 @@ export const useParallelFetch = (
       clearTimeout(timeout);
       setLights(makeOffBoard());
       if (getMounted()) {
-        doMultiFetch(signal, newSize);
+        doMultiFetch(signal);
       }
     }, 2000);
   }

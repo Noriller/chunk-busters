@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { Button } from './ui/button';
 import { useSearchParamsState } from './useSearchParamsState';
 
@@ -21,9 +14,11 @@ function randomBetween(min: number, max: number) {
 }
 
 const Speeds = {
+  ultraFast: 1,
   fast: 10,
   slow: 100,
-  chaotic: () => randomBetween(0, 100),
+  verySlow: 1000,
+  chaotic: () => randomBetween(0, 200),
 };
 
 export function SpeedContextProvider({
@@ -56,6 +51,18 @@ export function SpeedContextProvider({
           onClick={() => setSpeed('chaotic')}
         >
           Chaotic API
+        </Button>
+        <Button
+          variant={speed === 'ultraFast' ? 'secondary' : 'default'}
+          onClick={() => setSpeed('ultraFast')}
+        >
+          UltraFast
+        </Button>
+        <Button
+          variant={speed === 'verySlow' ? 'secondary' : 'default'}
+          onClick={() => setSpeed('verySlow')}
+        >
+          Very Slow
         </Button>
       </div>
     );

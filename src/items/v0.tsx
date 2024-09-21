@@ -1,4 +1,5 @@
 import { makeOffBoard } from '@/components/board/useBoards';
+import { useSize } from '@/components/SizeContext';
 import { useSpeed } from '@/components/SpeedContext';
 import { useEffect, useState } from 'react';
 import { type NavItem } from '.';
@@ -10,8 +11,9 @@ const { getMounted, setMounted } = mountedHack();
 const boardHook = () => {
   const [lights, setLights] = useState(makeOffBoard());
   const { speed } = useSpeed();
+  const { size } = useSize();
 
-  const multiFetch = useMultiFetch(setLights, getMounted, 2);
+  const multiFetch = useMultiFetch(setLights, getMounted);
 
   useEffect(() => {
     setMounted(true);
@@ -25,7 +27,7 @@ const boardHook = () => {
       setMounted(false);
       controller.abort('unmount');
     };
-  }, [speed]);
+  }, [speed, size]);
 
   return lights;
 };
@@ -60,10 +62,9 @@ _Are you sure? Like, absolutely sure?_
 export const useMultiFetch = (
   setLights: SetLights,
   getMounted: () => boolean,
-  size?: number,
 ) => {
-  const getApi = useFetchApi(size);
-  async function doMultiFetch(signal: AbortSignal, newSize = size) {
+  const getApi = useFetchApi();
+  async function doMultiFetch(signal: AbortSignal) {
     if (!getMounted()) {
       return;
     }
@@ -99,7 +100,7 @@ export const useMultiFetch = (
       clearTimeout(timeout);
       setLights(makeOffBoard());
       if (getMounted()) {
-        doMultiFetch(signal, newSize);
+        doMultiFetch(signal);
       }
     }, 2000);
   }

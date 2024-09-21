@@ -1,9 +1,9 @@
-import { makeOffBoard, type BoardLights } from '@/components/board/useBoards';
+import { makeOffBoard } from '@/components/board/useBoards';
+import { useSize } from '@/components/SizeContext';
 import { useSpeed } from '@/components/SpeedContext';
 import { useEffect, useState } from 'react';
 import { type NavItem } from '.';
-import { mountedHack, useFetchApi } from './utils/fetch';
-import { parseAndToggleOnce } from './utils/parseLine';
+import { mountedHack } from './utils/fetch';
 import { useParallelFetch } from './v1';
 
 const { getMounted, setMounted } = mountedHack();
@@ -11,8 +11,9 @@ const { getMounted, setMounted } = mountedHack();
 const boardHook = () => {
   const [lights, setLights] = useState(makeOffBoard());
   const { speed } = useSpeed();
+  const { size } = useSize();
 
-  const multiFetch = useParallelFetch(setLights, getMounted, 2, false);
+  const multiFetch = useParallelFetch(setLights, getMounted, false);
 
   useEffect(() => {
     setMounted(true);
@@ -26,7 +27,7 @@ const boardHook = () => {
       setMounted(false);
       controller.abort('unmount');
     };
-  }, [speed]);
+  }, [speed, size]);
 
   return lights;
 };
