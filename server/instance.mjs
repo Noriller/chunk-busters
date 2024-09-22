@@ -2,6 +2,11 @@
 import http from 'node:http';
 
 http.createServer(async (req, res) => {
+  // set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', '*');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+
   if (
     // in case of opening from browser
     req.url === '/favicon.ico'

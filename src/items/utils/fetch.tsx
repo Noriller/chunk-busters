@@ -3,6 +3,13 @@ import { useCallback } from 'react';
 import { parseToggleAndRemaining, type SetLights } from './parseLine';
 import { useSize } from '@/components/SizeContext';
 
+const BASE_URL = (api: number) => `http://localhost/api/${api}`;
+// yes, you can call different ports and for http/1 you can
+// have it work in parallel, even all 9 at once
+// but thats a kludge that is not really scalable
+// and as you'll see... there's better ways to solve this
+// const BASE_URL = (api: number) => `http://localhost:5888${api}/${api}`;;
+
 /**
  * @param speedHack http max parallel connections is 6 for most modern browsers
  * so, we hack here so make it feels like we are doing more requests
@@ -21,9 +28,7 @@ export const useFetchApi = (speedHack = false) => {
       );
       const size = typeof baseSize === 'function' ? baseSize() : baseSize;
 
-      const url = new URL(
-        `http://localhost/api/${api}/${size ?? ''}/${delay ?? ''}`,
-      );
+      const url = new URL(`${BASE_URL(api)}/${size ?? ''}/${delay ?? ''}`);
       return url.toString().replace(/\/+$/, '');
     },
     [speed, baseSize],
@@ -44,9 +49,7 @@ export const useStreamFetchApi = (setLights: SetLights) => {
       const delay = typeof speed === 'function' ? speed() : speed;
       const size = typeof baseSize === 'function' ? baseSize() : baseSize;
 
-      const url = new URL(
-        `http://localhost/api/${api}/${size ?? ''}/${delay ?? ''}`,
-      );
+      const url = new URL(`${BASE_URL(api)}/${size ?? ''}/${delay ?? ''}`);
       return url.toString().replace(/\/+$/, '');
     },
     [speed, baseSize],

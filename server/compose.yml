@@ -36,28 +36,44 @@ services:
   instance1:
     <<: *instance-base
     ports:
-      - "58080:58080"
+      - "58881:58080"
 
   instance2:
     <<: *instance-base
+    ports:
+      - "58882:58080"
 
   instance3:
     <<: *instance-base
+    ports:
+      - "58883:58080"
 
   instance4:
     <<: *instance-base
+    ports:
+      - "58884:58080"
 
   instance5:
     <<: *instance-base
+    ports:
+      - "58885:58080"
 
   instance6:
     <<: *instance-base
+    ports:
+      - "58886:58080"
 
   instance7:
     <<: *instance-base
+    ports:
+      - "58887:58080"
 
   instance8:
     <<: *instance-base
+    ports:
+      - "58888:58080"
 
   instance9:
     <<: *instance-base
+    ports:
+      - "58889:58080"
