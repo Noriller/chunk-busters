@@ -1,7 +1,10 @@
+import { useProgress } from '@/components/ProgressContext';
+import { useSize } from '@/components/SizeContext';
 import { useSpeed } from '@/components/SpeedContext';
 import { useCallback } from 'react';
 import { parseToggleAndRemaining, type SetLights } from './parseLine';
-import { useSize } from '@/components/SizeContext';
+
+const { getCount, increment, reset } = boardCounter();
 
 const BASE_URL = (api: number) => `http://localhost/api/${api}`;
 // yes, you can call different ports and for http/1 you can
@@ -43,11 +46,19 @@ export const useFetchApi = (speedHack = false) => {
 export const useStreamFetchApi = (setLights: SetLights) => {
   const { speed } = useSpeed();
   const { size: baseSize } = useSize();
+  const { changeMax, changeCurrent } = useProgress();
+
+  const changeBoardCurrent = (index: number) => {
+    increment(index);
+    changeCurrent(index, getCount(index));
+  };
 
   const getUrl = useCallback(
     (api: number) => {
       const delay = typeof speed === 'function' ? speed() : speed;
       const size = typeof baseSize === 'function' ? baseSize() : baseSize;
+      changeMax(api, size);
+      reset(api === 0 ? undefined : api);
 
       const url = new URL(`${BASE_URL(api)}/${size ?? ''}/${delay ?? ''}`);
       return url.toString().replace(/\/+$/, '');
@@ -80,6 +91,7 @@ export const useStreamFetchApi = (setLights: SetLights) => {
           buffer = parseToggleAndRemaining(
             buffer + decoder.decode(value),
             setLights,
+            changeBoardCurrent,
           );
         }
       }
@@ -100,5 +112,28 @@ export function mountedHack() {
   return {
     getMounted,
     setMounted,
+  };
+}
+
+export function boardCounter() {
+  const resetCount = () =>
+    Object.fromEntries(
+      Array.from({ length: 9 }, (_, i) => [i + 1, 0]),
+    ) as Record<number, number>;
+
+  let count = resetCount();
+  return {
+    getCount: (i: number) => count[i],
+    increment: (i: number, n?: number) => {
+      count[i] += n ?? 1;
+    },
+    reset: (n?: number) => {
+      if (n) {
+        count[n] = 0;
+        return;
+      }
+
+      count = resetCount();
+    },
   };
 }

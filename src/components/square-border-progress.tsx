@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useDeferredValue } from 'react';
 import { useProgress } from './ProgressContext';
 import type { Indexes } from './board/useBoards';
 
@@ -14,7 +14,9 @@ export function BorderProgress({
   children: React.ReactNode;
   boardIndex: number;
 }) {
-  const { progress } = useProgress(boardIndex);
+  const { getProgress } = useProgress();
+  const progressBase = getProgress(boardIndex);
+  const progress = useDeferredValue(progressBase);
 
   const borderSegments = useMemo(() => {
     const segments = [];

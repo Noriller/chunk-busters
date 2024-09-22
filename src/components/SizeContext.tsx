@@ -17,6 +17,8 @@ const Sizes = {
   '10': 1,
   '100': 2,
   '1_000': 3,
+  '10_000': 4,
+  '100_000': 5,
   '1_000_000': 6,
   chaotic: () => randomBetween(1, 6),
 };
@@ -53,6 +55,18 @@ export function SizeContextProvider({
           1_000
         </Button>
         <Button
+          variant={size === '10_000' ? 'secondary' : 'default'}
+          onClick={() => setSize('10_000')}
+        >
+          10_000
+        </Button>
+        <Button
+          variant={size === '100_000' ? 'secondary' : 'default'}
+          onClick={() => setSize('100_000')}
+        >
+          100_000
+        </Button>
+        <Button
           variant={size === '1_000_000' ? 'secondary' : 'default'}
           onClick={() => setSize('1_000_000')}
         >
@@ -81,4 +95,8 @@ export function SizeContextProvider({
 
 export function useSize() {
   return useContext(context);
+}
+
+export function getActualSize(n: number) {
+  return Number(eval(`1e${n}`));
 }

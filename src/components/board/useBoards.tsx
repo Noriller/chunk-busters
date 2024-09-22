@@ -1,8 +1,8 @@
 import { mountedHack } from '@/items/utils/fetch';
-import { useState, useEffect, useCallback } from 'react';
-import { useSpeed } from '../SpeedContext';
-import { useSize } from '../SizeContext';
 import type { SetLights } from '@/items/utils/parseLine';
+import { useCallback, useEffect, useState } from 'react';
+import { useSize } from '../SizeContext';
+import { useSpeed } from '../SpeedContext';
 
 export type Indexes = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 

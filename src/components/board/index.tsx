@@ -6,7 +6,7 @@ export function Board({ board = useRandomBoards() }) {
   return (
     <div className="rainbow-shadow relative z-0 aspect-square h-full">
       <div className="bg-wood grid h-full w-full grid-cols-3 grid-rows-3 gap-[2%] rounded-lg p-[2%]">
-        {Object.entries(board).map(([boardIndex, mini], i) => (
+        {Object.entries(board).map(([boardIndex, mini]) => (
           <BorderProgress boardIndex={Number(boardIndex)} key={boardIndex}>
             <MiniBoard lights={Object.values(mini)} />
           </BorderProgress>

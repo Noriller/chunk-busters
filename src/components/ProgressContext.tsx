@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { isIndexValid, type Indexes } from './board/useBoards';
+import { getActualSize } from './SizeContext';
 
 type Progress = Record<Indexes, number>;
 
@@ -22,8 +23,9 @@ const initProgress: Progress = {
 };
 
 type ProgressContext = {
-  progress: Progress;
-  changeProgress: (index: Indexes, value: number) => void;
+  getProgress: (index: number) => number;
+  changeCurrent: (index: number, value: number) => void;
+  changeMax: (index: number, value: number) => void;
 };
 
 const context = createContext<ProgressContext>(null!);
@@ -33,42 +35,58 @@ export function ProgressContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [progress, setProgress] = useState(initProgress);
+  const [current, setCurrent] = useState(initProgress);
+  const [max, setMax] = useState(initProgress);
 
-  const changeProgress = useCallback((index: Indexes, value: number) => {
-    setProgress((prev) => ({ ...prev, [index]: value }));
+  const changeCurrent = useCallback(
+    (index: number, current: number) => {
+      if (isIndexValid(index)) {
+        setCurrent((prev) => ({
+          ...prev,
+          [index]: max[index] ? current % max[index] : current,
+        }));
+      }
+    },
+    [max],
+  );
+
+  const changeMax = useCallback((index: number, value: number) => {
+    const size = getActualSize(value);
+    if (isIndexValid(index)) {
+      setMax((prev) => ({ ...prev, [index]: size }));
+    }
+
+    if (index === 0) {
+      setMax(
+        Object.fromEntries(
+          Object.keys(initProgress).map((k) => [Number(k), size]),
+        ) as Record<Indexes, number>,
+      );
+    }
   }, []);
+
+  const getProgress = useCallback(
+    (index: number) => {
+      if (isIndexValid(index)) {
+        return Math.floor((current[index] / max[index]) * 100);
+      }
+      return 0;
+    },
+    [current, max],
+  );
 
   const value = useMemo(
     () => ({
-      progress,
-      changeProgress,
+      getProgress,
+      changeCurrent,
+      changeMax,
     }),
-    [progress],
+    [changeCurrent, changeMax, getProgress],
   );
 
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export function useFullProgress() {
+export function useProgress() {
   return useContext(context);
-}
-
-export function useProgress(board: number) {
-  const { progress, changeProgress } = useContext(context);
-
-  if (!isIndexValid(board)) {
-    return { progress: 0, setProgress: () => {} };
-  }
-
-  const progressForBoard = useMemo(() => progress[board], [progress, board]);
-  const setProgressForBoard = useCallback(
-    (value: number) => changeProgress(board, value),
-    [changeProgress, board],
-  );
-
-  return {
-    progress: progressForBoard,
-    setProgress: setProgressForBoard,
-  };
 }

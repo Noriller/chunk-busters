@@ -1,4 +1,4 @@
-import { type BoardLights, isIndexValid } from '@/components/board/useBoards';
+import { type BoardLights, type Indexes, isIndexValid } from '@/components/board/useBoards';
 
 export function parseLine(str: string) {
   const [board, light] = str.split(' ');
@@ -111,24 +111,27 @@ export function parseAndToggleOnce(
 export function parseToggleAndRemaining(
   str: string,
   setLights: SetLights,
+  updateBoard: (board: number) => void
 ) {
   const { result, remaining } = parseWholeString(str);
 
   // trying to parse as many much as possible
   // was behaving unpredictably, so, changing
   // this to only toggle one "line" at a time
-  const toggleOne = toggleOneLine(setLights);
+  const toggleOne = toggleOneLine(setLights, updateBoard);
   result.forEach(toggleOne);
 
   return remaining;
 }
 
-function toggleOneLine(setLights: SetLights) {
+function toggleOneLine(setLights: SetLights, updateBoard: (board: number) => void) {
   return ({ board, light }: ParsedLine) => {
 
     if (!isIndexValid(board) || !isIndexValid(light)) {
       return;
     }
+
+    updateBoard(board);
 
     setLights((old) => {
       return structuredClone({

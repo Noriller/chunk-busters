@@ -1,7 +1,7 @@
 import { makeBoardHook, makeOffBoard } from '@/components/board/useBoards';
 import { type NavItem } from '.';
-import { useFetchApi, useStreamFetchApi } from './utils/fetch';
-import { parseAndToggleOnce, type SetLights } from './utils/parseLine';
+import { useStreamFetchApi } from './utils/fetch';
+import { type SetLights } from './utils/parseLine';
 
 export const v7 = {
   id: 'v7',
