@@ -126,12 +126,11 @@ export function parseToggleAndRemaining(
 
 function toggleOneLine(setLights: SetLights, updateBoard: (board: number) => void) {
   return ({ board, light }: ParsedLine) => {
+    updateBoard(board);
 
     if (!isIndexValid(board) || !isIndexValid(light)) {
       return;
     }
-
-    updateBoard(board);
 
     setLights((old) => {
       return structuredClone({

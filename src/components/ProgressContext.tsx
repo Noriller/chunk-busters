@@ -43,7 +43,7 @@ export function ProgressContextProvider({
       if (isIndexValid(index)) {
         setCurrent((prev) => ({
           ...prev,
-          [index]: max[index] ? current % max[index] : current,
+          [index]: current,
         }));
       }
     },

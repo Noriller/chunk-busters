@@ -1,6 +1,5 @@
-import { useState, useMemo, useEffect, useDeferredValue } from 'react';
+import { useDeferredValue, useMemo } from 'react';
 import { useProgress } from './ProgressContext';
-import type { Indexes } from './board/useBoards';
 
 // Number of segments per side of the square
 const SEGMENTS_PER_SIDE = 25;
@@ -16,6 +15,7 @@ export function BorderProgress({
 }) {
   const { getProgress } = useProgress();
   const progressBase = getProgress(boardIndex);
+  // defer the progress to avoid slowdown of the rest
   const progress = useDeferredValue(progressBase);
 
   const borderSegments = useMemo(() => {

@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { Button } from './ui/button';
 import { useSearchParamsState } from './useSearchParamsState';
+import { BorderedBox } from './bordered-box';
 
 type SizeContext = {
   size: number | (() => number);
@@ -35,7 +36,10 @@ export function SizeContextProvider({
 
   const SizeSwitcher = useMemo(() => {
     return (
-      <div className="mt-4 flex gap-2">
+      <BorderedBox
+        name="Size Controls"
+        description="Controls how many items the API will send (too many and you'll end without RAM)"
+      >
         <Button
           variant={size === '10' ? 'secondary' : 'default'}
           onClick={() => setSize('10')}
@@ -78,7 +82,7 @@ export function SizeContextProvider({
         >
           Chaotic
         </Button>
-      </div>
+      </BorderedBox>
     );
   }, [size]);
 

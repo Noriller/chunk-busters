@@ -35,11 +35,11 @@ function BoardDemo() {
 }
 
 export default () => (
-  <ProgressContextProvider>
-    <SizeContextProvider>
-      <SpeedContextProvider>
+  <SizeContextProvider>
+    <SpeedContextProvider>
+      <ProgressContextProvider>
         <BoardDemo />
-      </SpeedContextProvider>
-    </SizeContextProvider>
-  </ProgressContextProvider>
+      </ProgressContextProvider>
+    </SpeedContextProvider>
+  </SizeContextProvider>
 );

@@ -23,6 +23,12 @@ const BASE_URL = (api: number) => `http://localhost/api/${api}`;
 export const useFetchApi = (speedHack = false) => {
   const { speed } = useSpeed();
   const { size: baseSize } = useSize();
+  const { changeMax, changeCurrent } = useProgress();
+
+  const changeBoardCurrent = (index: number, n?: number) => {
+    increment(index, n);
+    changeCurrent(index, getCount(index));
+  };
 
   const getUrl = useCallback(
     (api: number) => {
@@ -30,6 +36,8 @@ export const useFetchApi = (speedHack = false) => {
         (typeof speed === 'function' ? speed() : speed) / (speedHack ? 2 : 1),
       );
       const size = typeof baseSize === 'function' ? baseSize() : baseSize;
+      reset();
+      changeMax(api, size);
 
       const url = new URL(`${BASE_URL(api)}/${size ?? ''}/${delay ?? ''}`);
       return url.toString().replace(/\/+$/, '');
@@ -53,18 +61,15 @@ export const useStreamFetchApi = (setLights: SetLights) => {
     changeCurrent(index, getCount(index));
   };
 
-  const getUrl = useCallback(
-    (api: number) => {
-      const delay = typeof speed === 'function' ? speed() : speed;
-      const size = typeof baseSize === 'function' ? baseSize() : baseSize;
-      changeMax(api, size);
-      reset(api === 0 ? undefined : api);
+  const getUrl = (api: number) => {
+    const delay = typeof speed === 'function' ? speed() : speed;
+    const size = typeof baseSize === 'function' ? baseSize() : baseSize;
+    changeMax(api, size);
+    reset();
 
-      const url = new URL(`${BASE_URL(api)}/${size ?? ''}/${delay ?? ''}`);
-      return url.toString().replace(/\/+$/, '');
-    },
-    [speed, baseSize],
-  );
+    const url = new URL(`${BASE_URL(api)}/${size ?? ''}/${delay ?? ''}`);
+    return url.toString().replace(/\/+$/, '');
+  };
 
   const decoder = new TextDecoder('utf-8');
 

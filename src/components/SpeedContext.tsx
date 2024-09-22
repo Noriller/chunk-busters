@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { Button } from './ui/button';
 import { useSearchParamsState } from './useSearchParamsState';
+import { BorderedBox } from './bordered-box';
 
 type SpeedContext = {
   speed: number | (() => number);
@@ -33,7 +34,10 @@ export function SpeedContextProvider({
 
   const SpeedSwitcher = useMemo(() => {
     return (
-      <div className="mt-4 flex gap-2">
+      <BorderedBox
+        name="Speed Controls"
+        description="Controls the speed of which the API will send chunks (too fast and it might lag too much)"
+      >
         <Button
           variant={speed === 'fast' ? 'secondary' : 'default'}
           onClick={() => setSpeed('fast')}
@@ -64,7 +68,7 @@ export function SpeedContextProvider({
         >
           Very Slow
         </Button>
-      </div>
+      </BorderedBox>
     );
   }, [speed]);
 
