@@ -1,20 +1,20 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useProgress } from './ProgressContext';
+import type { Indexes } from './board/useBoards';
 
 // Number of segments per side of the square
 const SEGMENTS_PER_SIDE = 25;
 // Total number of segments
 const TOTAL_SEGMENTS = SEGMENTS_PER_SIDE * 4;
 
-export function BorderProgress({ children }: { children: React.ReactNode }) {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((progress) => (progress + 1) % 100);
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, []);
+export function BorderProgress({
+  children,
+  boardIndex,
+}: {
+  children: React.ReactNode;
+  boardIndex: number;
+}) {
+  const { progress } = useProgress(boardIndex);
 
   const borderSegments = useMemo(() => {
     const segments = [];

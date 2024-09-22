@@ -3,10 +3,10 @@ import { useCallback, useMemo } from 'react';
 import { Board } from './board';
 import { useRandomBoards } from './board/useBoards';
 import { HighlightedMarkdown } from './HighlightedMarkdown';
-import { Button } from './ui/button';
-import { useSpeed } from './SpeedContext';
-import { useSearchParamsState } from './useSearchParamsState';
 import { useSize } from './SizeContext';
+import { useSpeed } from './SpeedContext';
+import { Button } from './ui/button';
+import { useSearchParamsState } from './useSearchParamsState';
 
 const notFound = /*md*/ `
 ## Nothing to See Here!
@@ -48,16 +48,15 @@ export function useNav() {
     };
 
     const content = getContent();
+    const isNavs = typeof content === 'string';
 
     return (
       <>
         <HighlightedMarkdown>
-          {typeof content === 'string'
-            ? content
-            : defaultsContent[content.type]}
+          {isNavs ? content : defaultsContent[content.type]}
         </HighlightedMarkdown>
-        {typeof content === 'string' && SpeedSwitcher}
-        {typeof content === 'string' && SizeSwitcher}
+        {isNavs && SpeedSwitcher}
+        {isNavs && SizeSwitcher}
       </>
     );
   }, [activeNav, speed, size]);

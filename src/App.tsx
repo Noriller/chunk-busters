@@ -1,4 +1,5 @@
 import { FancyTitle } from './components/fancyTitle';
+import { ProgressContextProvider } from './components/ProgressContext';
 import { SizeContextProvider } from './components/SizeContext';
 import { SpeedContextProvider } from './components/SpeedContext';
 import { ScrollArea } from './components/ui/scroll-area';
@@ -34,9 +35,11 @@ function BoardDemo() {
 }
 
 export default () => (
-  <SizeContextProvider>
-    <SpeedContextProvider>
-      <BoardDemo />
-    </SpeedContextProvider>
-  </SizeContextProvider>
+  <ProgressContextProvider>
+    <SizeContextProvider>
+      <SpeedContextProvider>
+        <BoardDemo />
+      </SpeedContextProvider>
+    </SizeContextProvider>
+  </ProgressContextProvider>
 );
