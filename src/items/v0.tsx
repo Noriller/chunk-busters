@@ -34,7 +34,7 @@ _Are you sure? Like, absolutely sure?_
 } satisfies NavItem;
 
 export function useMultiFetch(setLights: SetLights, getMounted: () => boolean) {
-  const getApi = useFetchApi();
+  const { getApi, resetCounter } = useFetchApi(undefined);
   async function doMultiFetch(signal: AbortSignal) {
     if (!getMounted()) {
       return;
@@ -70,6 +70,7 @@ export function useMultiFetch(setLights: SetLights, getMounted: () => boolean) {
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       setLights(makeOffBoard());
+      resetCounter();
       if (getMounted()) {
         doMultiFetch(signal);
       }

@@ -26,6 +26,7 @@ type ProgressContext = {
   getProgress: (index: number) => number;
   changeCurrent: (index: number, value: number) => void;
   changeMax: (index: number, value: number) => void;
+  reset: () => void;
 };
 
 const context = createContext<ProgressContext>(null!);
@@ -75,13 +76,18 @@ export function ProgressContextProvider({
     [current, max],
   );
 
+  const reset = useCallback(() => {
+    setCurrent(initProgress);
+  }, []);
+
   const value = useMemo(
     () => ({
       getProgress,
       changeCurrent,
       changeMax,
+      reset,
     }),
-    [changeCurrent, changeMax, getProgress],
+    [changeCurrent, changeMax, getProgress, reset],
   );
 
   return <context.Provider value={value}>{children}</context.Provider>;

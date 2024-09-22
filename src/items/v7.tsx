@@ -95,7 +95,7 @@ fetch(url, {
 } satisfies NavItem;
 
 export function useOneFetch(setLights: SetLights, getMounted: () => boolean) {
-  const getApi = useStreamFetchApi(setLights);
+  const { getApi, resetCounter } = useStreamFetchApi(setLights);
 
   async function doFetch(signal: AbortSignal) {
     if (!getMounted()) {
@@ -107,6 +107,7 @@ export function useOneFetch(setLights: SetLights, getMounted: () => boolean) {
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       setLights(makeOffBoard());
+      resetCounter();
       if (getMounted()) {
         doFetch(signal);
       }

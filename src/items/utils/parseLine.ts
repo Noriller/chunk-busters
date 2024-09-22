@@ -1,4 +1,4 @@
-import { type BoardLights, type Indexes, isIndexValid } from '@/components/board/useBoards';
+import { type BoardLights, isIndexValid } from '@/components/board/useBoards';
 
 export function parseLine(str: string) {
   const [board, light] = str.split(' ');
@@ -106,6 +106,29 @@ export function parseAndToggleOnce(
       },
     };
   });
+}
+
+export function parseProgressAndRemaining(
+  str: string,
+  updateBoard: (board: number, value: number) => void
+) {
+  const { result, remaining } = parseWholeString(str);
+
+  const accumulateValues = result.reduce((acc, { board }) => {
+    if (!acc[board]) {
+      acc[board] = 1;
+    } else {
+      acc[board] += 1;
+    }
+
+    return acc;
+  }, {} as Record<number, number>);
+
+  Object.entries(accumulateValues).forEach(([board, value]) => {
+    updateBoard(Number(board), value);
+  });
+
+  return remaining;
 }
 
 export function parseToggleAndRemaining(

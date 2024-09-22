@@ -1,6 +1,6 @@
 import { makeBoardHook, makeOffBoard } from '@/components/board/useBoards';
 import { type NavItem } from '.';
-import { useFetchApi } from './utils/fetch';
+import { boardCounter, useFetchApi } from './utils/fetch';
 import { parseAndToggleOnce, type SetLights } from './utils/parseLine';
 
 export const v1 = {
@@ -46,7 +46,7 @@ export function useParallelFetch(
   getMounted: () => boolean,
   speedHack = true,
 ) {
-  const getApi = useFetchApi(speedHack);
+  const { getApi, resetCounter } = useFetchApi(speedHack);
   async function doMultiFetch(signal: AbortSignal) {
     if (!getMounted()) {
       return;
@@ -61,6 +61,7 @@ export function useParallelFetch(
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       setLights(makeOffBoard());
+      resetCounter();
       if (getMounted()) {
         doMultiFetch(signal);
       }

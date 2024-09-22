@@ -37,7 +37,7 @@ but we are not fetching only the ammount of results that you're seeing before!
 } satisfies NavItem;
 
 export function useMultiFetch(setLights: SetLights, getMounted: () => boolean) {
-  const getApi = useStreamFetchApi(setLights);
+  const { getApi, resetCounter } = useStreamFetchApi(setLights);
 
   async function doMultiFetch(signal: AbortSignal) {
     if (!getMounted()) {
@@ -57,6 +57,7 @@ export function useMultiFetch(setLights: SetLights, getMounted: () => boolean) {
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       setLights(makeOffBoard());
+      resetCounter();
       if (getMounted()) {
         doMultiFetch(signal);
       }

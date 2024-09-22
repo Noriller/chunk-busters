@@ -42,7 +42,7 @@ export function useParallelFetch(
   setLights: SetLights,
   getMounted: () => boolean,
 ) {
-  const getApi = useStreamFetchApi(setLights);
+  const { getApi, resetCounter } = useStreamFetchApi(setLights);
 
   async function doMultiFetch(signal: AbortSignal) {
     if (!getMounted()) {
@@ -56,6 +56,7 @@ export function useParallelFetch(
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       setLights(makeOffBoard());
+      resetCounter();
       if (getMounted()) {
         doMultiFetch(signal);
       }

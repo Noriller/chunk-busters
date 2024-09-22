@@ -2,9 +2,13 @@ import { useProgress } from '@/components/ProgressContext';
 import { useSize } from '@/components/SizeContext';
 import { useSpeed } from '@/components/SpeedContext';
 import { useCallback } from 'react';
-import { parseToggleAndRemaining, type SetLights } from './parseLine';
+import {
+  parseProgressAndRemaining,
+  parseToggleAndRemaining,
+  type SetLights,
+} from './parseLine';
 
-const { getCount, increment, reset } = boardCounter();
+const decoder = new TextDecoder('utf-8');
 
 const BASE_URL = (api: number) => `http://localhost/api/${api}`;
 // yes, you can call different ports and for http/1 you can
@@ -21,6 +25,7 @@ const BASE_URL = (api: number) => `http://localhost/api/${api}`;
  * calling multiple times in parallel is a bad approach
  */
 export const useFetchApi = (speedHack = false) => {
+  const { getCount, increment, reset } = boardCounter();
   const { speed } = useSpeed();
   const { size: baseSize } = useSize();
   const { changeMax, changeCurrent } = useProgress();
@@ -36,7 +41,55 @@ export const useFetchApi = (speedHack = false) => {
         (typeof speed === 'function' ? speed() : speed) / (speedHack ? 2 : 1),
       );
       const size = typeof baseSize === 'function' ? baseSize() : baseSize;
-      reset();
+      changeMax(api, size);
+
+      const url = new URL(`${BASE_URL(api)}/${size ?? ''}/${delay ?? ''}`);
+      return url.toString().replace(/\/+$/, '');
+    },
+    [speed, speedHack, baseSize],
+  );
+
+  const getApi = (api: number, signal: AbortSignal) =>
+    fetch(getUrl(api), {
+      signal,
+    }).then(async (res) => {
+      await parseReaderClone(
+        res.clone().body?.getReader(),
+        signal,
+        changeBoardCurrent,
+      );
+      return res.text();
+    });
+
+  return {
+    getApi,
+    resetCounter: reset,
+  };
+};
+
+export const useStreamFetchApi = (
+  setLights: SetLights,
+  counterUtils = boardCounter(),
+) => {
+  const { getCount, increment, reset: resetCounter } = counterUtils;
+  const { speed } = useSpeed();
+  const { size: baseSize } = useSize();
+  const { changeMax, changeCurrent, reset: resetProgress } = useProgress();
+
+  const changeBoardCurrent = (index: number) => {
+    increment(index);
+    changeCurrent(index, getCount(index));
+  };
+
+  const reset = () => {
+    resetCounter();
+    resetProgress();
+  };
+
+  const getUrl = useCallback(
+    (api: number) => {
+      const delay = typeof speed === 'function' ? speed() : speed;
+      const size = typeof baseSize === 'function' ? baseSize() : baseSize;
       changeMax(api, size);
 
       const url = new URL(`${BASE_URL(api)}/${size ?? ''}/${delay ?? ''}`);
@@ -45,35 +98,7 @@ export const useFetchApi = (speedHack = false) => {
     [speed, baseSize],
   );
 
-  return (api: number, signal: AbortSignal) =>
-    fetch(getUrl(api), {
-      signal,
-    }).then((res) => res.text());
-};
-
-export const useStreamFetchApi = (setLights: SetLights) => {
-  const { speed } = useSpeed();
-  const { size: baseSize } = useSize();
-  const { changeMax, changeCurrent } = useProgress();
-
-  const changeBoardCurrent = (index: number) => {
-    increment(index);
-    changeCurrent(index, getCount(index));
-  };
-
-  const getUrl = (api: number) => {
-    const delay = typeof speed === 'function' ? speed() : speed;
-    const size = typeof baseSize === 'function' ? baseSize() : baseSize;
-    changeMax(api, size);
-    reset();
-
-    const url = new URL(`${BASE_URL(api)}/${size ?? ''}/${delay ?? ''}`);
-    return url.toString().replace(/\/+$/, '');
-  };
-
-  const decoder = new TextDecoder('utf-8');
-
-  return (api: number, signal: AbortSignal) =>
+  const getApi = (api: number, signal: AbortSignal) =>
     fetch(getUrl(api), {
       signal,
     }).then(async (res) => {
@@ -101,6 +126,11 @@ export const useStreamFetchApi = (setLights: SetLights) => {
         }
       }
     });
+
+  return {
+    getApi,
+    resetCounter: reset,
+  };
 };
 
 /**
@@ -141,4 +171,34 @@ export function boardCounter() {
       count = resetCount();
     },
   };
+}
+
+parseProgressAndRemaining;
+
+async function parseReaderClone(
+  reader: ReadableStreamDefaultReader<Uint8Array> | undefined,
+  signal: AbortSignal,
+  changeBoardCurrent: (index: number) => void,
+) {
+  if (!reader) {
+    return;
+  }
+
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+
+    if (done || signal.aborted) {
+      reader.cancel(signal.reason);
+      break;
+    }
+
+    if (value) {
+      buffer = parseProgressAndRemaining(
+        buffer + decoder.decode(value),
+        changeBoardCurrent,
+      );
+    }
+  }
 }

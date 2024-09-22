@@ -45,7 +45,7 @@ function useParallelHandleFetch(
   setLights: SetLights,
   getMounted: () => boolean,
 ) {
-  const getApi = useFetchApi();
+  const { getApi, resetCounter } = useFetchApi();
   async function doMultiFetch(signal: AbortSignal) {
     if (!getMounted()) {
       return;
@@ -62,6 +62,7 @@ function useParallelHandleFetch(
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       setLights(makeOffBoard());
+      resetCounter();
       if (getMounted()) {
         doMultiFetch(signal);
       }

@@ -40,7 +40,7 @@ _\\~\\~ drum roll noises \\~\\~_
 } satisfies NavItem;
 
 export function useOneFetch(setLights: SetLights, getMounted: () => boolean) {
-  const getApi = useFetchApi();
+  const { getApi, resetCounter } = useFetchApi();
 
   async function doFetch(signal: AbortSignal) {
     if (!getMounted()) {
@@ -53,6 +53,7 @@ export function useOneFetch(setLights: SetLights, getMounted: () => boolean) {
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       setLights(makeOffBoard());
+      resetCounter();
       if (getMounted()) {
         doFetch(signal);
       }
