@@ -65,8 +65,7 @@ function* infiniteData(
 ) {
   let i = 0;
 
-  // const extraPadding = 'this thing is just to make each piece of data bigger '.repeat(100);
-  const extraPadding = 'undef';
+  const extraPadding = 'this thing is just to make each piece of data bigger '.repeat(100);
 
   while (true) {
     // while this could be an object
