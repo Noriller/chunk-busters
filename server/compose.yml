@@ -8,6 +8,18 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
+      - facade
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./nginx.conf
+          target: /etc/nginx/conf.d/default.conf
+
+  facade:
+    build:
+      context: .
+      dockerfile: ./facade.Dockerfile
+    depends_on:
       - instance1
       - instance2
       - instance3
@@ -20,21 +32,18 @@ services:
     develop:
       watch:
         - action: sync+restart
-          path: ./nginx.conf
-          target: /etc/nginx/conf.d/default.conf
+          path: ./facade.mjs
+          target: /server/facade.mjs
 
-  instance-base: &instance-base
+  instance1: &instance-base
     build:
       context: .
-      dockerfile: ./node.Dockerfile
+      dockerfile: ./instance.Dockerfile
     develop:
       watch:
         - action: sync+restart
           path: ./instance.mjs
           target: /server/instance.mjs
-
-  instance1:
-    <<: *instance-base
     ports:
       - "58881:58080"
 
