@@ -17,14 +17,14 @@ http.createServer(async (req, res) => {
     return res.end();
   }
 
-  console.log(`🚀 ~ server ~ req.url:`, req.url);
+  console.log(`🚀 ~ instance ~ req.url:`, req.url);
 
   // example: http://localhost:58080/{slug to print}/{max POW}/{delay in ms}
   const [, slug, number = 1, delay = undefined] = req.url?.split('/') || [];
 
   const max = Number(number) ? eval('1e' + number) : 1e1;
 
-  console.log(`🚀 ~ server: Starting`, { slug, max, delay });
+  console.log(`🚀 ~ instance: Starting`, { slug, max, delay });
 
   const dataGenerator = infiniteData(slug);
 
@@ -37,11 +37,15 @@ http.createServer(async (req, res) => {
   // you can call directly on browser to see it streaming data in real time!
   res.writeHead(200, { 'Content-Type': 'text; charset=utf-8' });
 
-  let i = -1;
-  for await (const data of dataGenerator) {
-    if (!isOpen || ++i > max) {
+  let generated = 0;
+
+  for await (const [n, data] of dataGenerator) {
+    if (!isOpen || n > max) {
       break;
     }
+    // keep how many items we have generated
+    generated = n;
+
     // some random delay is added to simulate real conditions
     // of generating/retrieving data
     // it will sleep between delay ms +/- 50%
@@ -49,30 +53,33 @@ http.createServer(async (req, res) => {
     res.write(data);
   }
 
-  console.log(`🚀 ~ server ~ Ending at ${isOpen ? i - 1 : i}`, { slug, max, delay });
+  console.log(`🚀 ~ instance ~ Ending at ${generated}`, { slug, max, delay });
   return res.end();
 })
   .listen(process.env.PORT || 58080, () => {
-    console.log(`🚀 ~ server ~ listening on port ${process.env.PORT || 58080}`);
+    console.log(`🚀 ~ instance ~ listening on port ${process.env.PORT || 58080}`);
   });
 
 function* infiniteData(
   /** @type {string} */ slug,
 ) {
-  // generate random number between 0 and 9
-  function randomNumber() {
-    return Math.floor(Math.random() * 10);
-  }
+  let i = 0;
 
-  const extraPadding = 'this thing is just to make each piece of data bigger '.repeat(100);
+  // const extraPadding = 'this thing is just to make each piece of data bigger '.repeat(100);
+  const extraPadding = 'undef';
 
   while (true) {
     // while this could be an object
     // but we will just use a string
     // to make it easier to parse it
     // split on space and break on \n
-    yield `${slug} ${randomNumber()} ${extraPadding} \n`;
+    yield /** @type {const} */([++i, `${slug} ${randomNumber()} ${extraPadding} \n`]);
   }
+}
+
+// generate random number between 0 and 9
+function randomNumber() {
+  return Math.floor(Math.random() * 10);
 }
 
 const randomBetween = (/** @type {number} */ min, /** @type {number} */ max) => {
