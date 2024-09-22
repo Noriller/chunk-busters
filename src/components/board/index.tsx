@@ -1,3 +1,4 @@
+import { BorderProgress } from '../square-border-progress';
 import { Led } from './led';
 import { useRandomBoards } from './useBoards';
 
@@ -15,12 +16,14 @@ export function Board({ board = useRandomBoards() }) {
 
 function MiniBoard({ lights }: { lights: boolean[] }) {
   return (
-    <div className="bg-circuit h-full w-full rounded-lg p-[4%]">
-      <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-[10%]">
-        {lights.map((on, i) => (
-          <Led key={i} on={on} />
-        ))}
+    <BorderProgress>
+      <div className="bg-circuit h-full w-full rounded-lg p-[4%]">
+        <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-[10%]">
+          {lights.map((on, i) => (
+            <Led key={i} on={on} />
+          ))}
+        </div>
       </div>
-    </div>
+    </BorderProgress>
   );
 }
