@@ -24,10 +24,19 @@ This is good and all... up to a point.
 
 But...
 
-Browsers enforce a max parallel connections of 6 in most modern browsers.
+Browsers enforce a max parallel connections of 6 in most modern browsers (for the same address/port).
 
 This means that you can't do all 9 fetches in parallel.
-(Yes, there's \`http/2\`, but you can't really assume it's available for everyone.)
+
+> But... http/2
+>
+> Yes, there's \`http/2\`, but you can't really assume it's available for everyone.
+
+> But... different addresses and/or ports.
+>
+> Yes, you can host each api in a different address and/or port. But...
+>
+> ...wait and find out...
 
 ---
 
