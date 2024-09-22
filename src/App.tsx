@@ -18,7 +18,7 @@ function BoardDemo() {
             <nav className="mb-4 flex flex-wrap gap-2">
               <NavButtons />
             </nav>
-            <div className="prose prose-invert mt-4 text-primary-foreground 2xl:pb-[10em]">
+            <div className="prose prose-invert mt-4 min-w-full text-primary-foreground 2xl:pb-[10em]">
               {navContent}
             </div>
           </ScrollArea>
