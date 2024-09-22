@@ -13,9 +13,12 @@ You have the API's, you \`fetch\` each of them, you wait and you have the data.
 
 \`\`\`typescript
 await fetch1();
+handleResult(1);
 await fetch2();
-await fetch3();
+handleResult(2);
 ...
+await fetch9();
+handleResult(9);
 \`\`\`
 
 Only then you start rendering.

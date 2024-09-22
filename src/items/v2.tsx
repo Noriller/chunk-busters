@@ -18,8 +18,8 @@ _I'm smart, right?_
 await Promise.all([
   fetch1().then(handleResult),
   fetch2().then(handleResult),
-  fetch3().then(handleResult),
   ...
+  fetch9().then(handleResult),
 ]);
 \`\`\`
 

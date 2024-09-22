@@ -17,9 +17,10 @@ So... Obviously you just use \`Promise.all\`.
 await Promise.all([
   fetch1(),
   fetch2(),
-  fetch3(),
   ...
+  fetch9(),
 ]);
+handleAllResults(results);
 \`\`\`
 
 This way, all \`fetch\` calls are executed in parallel.

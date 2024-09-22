@@ -14,9 +14,10 @@ I'm sorry... I was lying to you...
 await Promise.all([
   fetch1(),
   fetch2(),
-  fetch3(),
   ...
+  fetch9(),
 ]);
+handleAllResults(results);
 \`\`\`
 
 This is good and all... up to a point.

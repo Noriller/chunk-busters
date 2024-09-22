@@ -18,10 +18,12 @@ This means we can consume and render the results as they come in.
 So, now we will still do this again:
 
 \`\`\`typescript
-await fetch1();
-await fetch2();
-await fetch3();
-...
+await Promise.all([
+  fetch1().then(handleResult),
+  fetch2().then(handleResult),
+  ...
+  fetch9().then(handleResult),
+]);
 \`\`\`
 
 And for each one of them we will start rendering them as they come.

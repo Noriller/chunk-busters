@@ -15,9 +15,12 @@ We will still do this:
 
 \`\`\`typescript
 await fetch1();
+handleResult(1);
 await fetch2();
-await fetch3();
+handleResult(2);
 ...
+await fetch9();
+handleResult(3);
 \`\`\`
 
 However... we gonna start consuming the results as they come in.
