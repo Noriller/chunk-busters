@@ -8,6 +8,7 @@ import { v5 } from './v5';
 import { v6 } from './v6';
 import { v7 } from './v7';
 import { v8 } from './v8';
+import { v9 } from './v9';
 
 export type NavItem = {
   id: string;
@@ -26,11 +27,5 @@ export const navItems = [
   v6,
   v7,
   v8,
-  // Add more navigation items to demonstrate scrolling
-  ...Array.from({ length: 2 }, (_, i) => ({
-    id: `${i}`,
-    title: `Navigation ${i}`,
-    content: `Content for Navigation ${i}`,
-    boardHook: useRandomBoards,
-  })),
+  v9,
 ];
