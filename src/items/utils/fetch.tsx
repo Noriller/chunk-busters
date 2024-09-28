@@ -202,3 +202,25 @@ async function parseReaderClone(
     }
   }
 }
+
+export function usePostToApi() {
+  const { addToMax } = useProgress();
+
+  return async ({
+    api,
+    key,
+    value,
+  }: {
+    api: number;
+    key: 'quantity' | 'speed';
+    value: number;
+  }) => {
+    const result: boolean = await fetch(`${BASE_URL(api)}/${key}/${value}`, {
+      method: 'POST',
+    }).then((res) => res.json());
+
+    if (result && key === 'quantity') {
+      addToMax(api, value);
+    }
+  };
+}

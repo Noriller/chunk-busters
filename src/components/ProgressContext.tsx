@@ -10,10 +10,11 @@ import { BorderedBox } from './bordered-box';
 import { getActualSize } from './SizeContext';
 import { Button } from './ui/button';
 import { useSearchParamsState } from './useSearchParamsState';
+import { ProgressButtonsGrid } from './ProgressButtons';
 
 type Progress = Record<Indexes, number>;
 
-const initProgress: Progress = {
+export const initProgress: Progress = {
   1: 0,
   2: 0,
   3: 0,
@@ -29,6 +30,7 @@ type ProgressContext = {
   getProgress: (index: number) => number;
   changeCurrent: (index: number, value: number) => void;
   changeMax: (index: number, value: number) => void;
+  addToMax: (index: number, value: number) => void;
   reset: () => void;
   defer: boolean;
   extra: boolean;
@@ -71,6 +73,21 @@ export function ProgressContextProvider({
         Object.fromEntries(
           Object.keys(initProgress).map((k) => [Number(k), size]),
         ) as Record<Indexes, number>,
+      );
+    }
+  }, []);
+
+  const addToMax = useCallback((index: number, value: number) => {
+    if (isIndexValid(index)) {
+      setMax((prev) => ({ ...prev, [index]: prev[index] + value }));
+    }
+
+    if (index === 0) {
+      setMax(
+        (old) =>
+          Object.fromEntries(
+            Object.entries(old).map(([k, size]) => [k, size + value]),
+          ) as Record<Indexes, number>,
       );
     }
   }, []);
@@ -123,6 +140,7 @@ export function ProgressContextProvider({
       getProgress,
       changeCurrent,
       changeMax,
+      addToMax,
       reset,
       defer: Boolean(defer),
       extra: Boolean(extra),
@@ -132,6 +150,7 @@ export function ProgressContextProvider({
     [
       changeCurrent,
       changeMax,
+      addToMax,
       getProgress,
       reset,
       defer,
@@ -146,109 +165,4 @@ export function ProgressContextProvider({
 
 export function useProgress() {
   return useContext(context);
-}
-
-function ProgressButtonsGrid() {
-  const [speed, setSpeed] = useState(50);
-  const [quantity, setQuantity] = useState(1000);
-
-  const changeSpeed = (value: number) => () => {
-    setSpeed(value);
-  };
-
-  const changeQuantity = (value: number) => () => {
-    setQuantity(value);
-  };
-
-  return (
-    <>
-      <HorizontalDivider />
-
-      <div className="flex gap-4">
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between gap-4">
-            <div>Quantity:</div>
-            <Button
-              variant={quantity === +1000 ? 'secondary' : 'default'}
-              onClick={changeQuantity(+1000)}
-            >
-              +1000
-            </Button>
-            <Button
-              variant={quantity === -1000 ? 'secondary' : 'default'}
-              onClick={changeQuantity(-1000)}
-            >
-              -1000
-            </Button>
-          </div>
-          <div className="flex justify-between gap-4">
-            <div>Speed:</div>
-            <Button
-              variant={speed === +50 ? 'secondary' : 'default'}
-              onClick={changeSpeed(+50)}
-            >
-              +50
-            </Button>
-            <Button
-              variant={speed === -50 ? 'secondary' : 'default'}
-              onClick={changeSpeed(-50)}
-            >
-              -50
-            </Button>
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div>Change ALL</div>
-          <div className="flex flex-col gap-4">
-            <Button>Quantity {displayValue(quantity)}</Button>
-            <Button>Speed {displayValue(speed)}</Button>
-          </div>
-        </div>
-      </div>
-
-      <HorizontalDivider />
-
-      <div className="grid grid-cols-3 grid-rows-3 gap-2">
-        {Object.keys(initProgress).map((k) => (
-          <BoardButtons
-            key={k}
-            board={Number(k)}
-            quantity={quantity}
-            speed={speed}
-          />
-        ))}
-      </div>
-    </>
-  );
-}
-
-const displayValue = (val: number) => `${val > 0 ? '+' : ''}${val}`;
-
-function HorizontalDivider() {
-  return <div className="my-2 h-[2px] bg-gray-300" />;
-}
-
-function BoardButtons({
-  board,
-  quantity,
-  speed,
-}: {
-  board: number;
-  quantity: number;
-  speed: number;
-}) {
-  const { getProgress } = useProgress();
-
-  const disabled = getProgress(board) > 99;
-
-  return (
-    <div className="flex justify-center gap-2">
-      <Button variant="ghost" onClick={() => {}} disabled={disabled}>
-        {board} | {displayValue(quantity)}
-      </Button>
-      <Button variant="ghost" onClick={() => {}} disabled={disabled}>
-        {board} | {displayValue(speed)}
-      </Button>
-    </div>
-  );
 }
