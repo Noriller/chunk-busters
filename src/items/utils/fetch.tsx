@@ -215,12 +215,21 @@ export function usePostToApi() {
     key: 'quantity' | 'speed';
     value: number;
   }) => {
-    const result: boolean = await fetch(`${BASE_URL(api)}/${key}/${value}`, {
-      method: 'POST',
-    }).then((res) => res.json());
+    const result: boolean | boolean[] = await fetch(
+      `${BASE_URL(api)}/${key}/${value}`,
+      {
+        method: 'POST',
+      },
+    ).then((res) => res.json());
 
     if (result && key === 'quantity') {
-      addToMax(api, value);
+      if (api > 0 || !Array.isArray(result)) {
+        return addToMax(api, value);
+      }
+
+      result.forEach((r, i) => {
+        r && addToMax(i + 1, value);
+      });
     }
   };
 }
