@@ -33,6 +33,8 @@ http.createServer(async (req, res) => {
     const key = /** @type {'quantity' | 'speed'} */(keyReq);
     const value = Number(valueReq);
 
+    res.setHeader('Content-Type', 'application/json');
+
     if (key === 'quantity') {
       if (getShouldStop()) {
         res.statusCode = 200;
@@ -42,12 +44,16 @@ http.createServer(async (req, res) => {
       const newMax = MAX_SIZE + value;
       MAX_SIZE = newMax < 0 ? 0 : newMax;
 
+      console.log(`🚀 ~ http.createServer ~ MAX_SIZE:`, MAX_SIZE)
+
       res.statusCode = 200;
       return res.end(JSON.stringify(true));
     }
 
     const newDelay = (DELAY ?? 0) + value;
     DELAY = newDelay < 2 ? 1 : newDelay;
+
+    console.log(`🚀 ~ http.createServer ~ DELAY:`, DELAY)
 
     res.statusCode = 200;
     return res.end(JSON.stringify(true));

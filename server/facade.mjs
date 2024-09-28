@@ -1,6 +1,8 @@
 // @ts-check
 import http from 'node:http';
 
+let isOpen = true;
+
 // const BASE_URL = (/** @type {number} */ n) => `http://localhost/api/${n}`;
 const BASE_URL = (/** @type {number} */ n) => `http://instance${n}:58080/${n}`;
 
@@ -21,21 +23,46 @@ http.createServer(async (req, res) => {
   if (
     // in case of opening from browser
     req.url === '/favicon.ico'
-    // not a GET request
-    || req.method !== 'GET'
+    // not a GET/POST request
+    || !['GET', 'POST'].includes(/** @type {string} */(req.method))
   ) {
     res.writeHead(404);
     return res.end();
   }
 
-  console.log(`🚀 ~ facade ~ req.url:`, req.url);
+  console.log(`🚀 ~ instance ~ req`, { method: req.method, url: req.url });
+
+
+  if (req.method === 'POST') {
+    // example: http://localhost/api/0/{quantity|speed}/{value +-}
+    const [, keyReq, valueReq] = req.url?.split('/') || [];
+
+    res.setHeader('Content-Type', 'application/json');
+
+    if (!isOpen) {
+      res.statusCode = 200;
+      return res.end(JSON.stringify(false));
+    }
+
+    const results = await Promise.all(Array
+      .from({ length: 9 }, (_, i) => i + 1)
+      .map((api) => {
+        return fetch(`${BASE_URL(api)}/${keyReq}/${valueReq}`, {
+          method: 'POST',
+        }).then((res) => res.json());
+      })
+    );
+
+    res.statusCode = 200;
+    return res.end(JSON.stringify(results));
+  }
 
   // example: http://localhost:58080/{max POW}/{delay in ms}
   const [, size = '1', delay = '100'] = req.url?.split('/') || [];
 
   console.log(`🚀 ~ server: Starting`, { size, delay });
 
-  let isOpen = true;
+  isOpen = true;
   const controller = new AbortController();
 
   req.on('close', () => {
