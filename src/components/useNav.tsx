@@ -34,7 +34,7 @@ export function useNav() {
   const [activeNav, setActiveNav] = useSearchParamsState('nav', 'home');
   const { speed, SpeedSwitcher } = useSpeed();
   const { size, SizeSwitcher } = useSize();
-  const { defer, ProgressSwitcher } = useProgress();
+  const { defer, extra, ProgressSwitcher } = useProgress();
 
   const navContent = useMemo(() => {
     const getContent = () => {
@@ -62,7 +62,7 @@ export function useNav() {
         {isNavs && ProgressSwitcher}
       </>
     );
-  }, [activeNav, speed, size, defer]);
+  }, [activeNav, speed, size, defer, extra]);
 
   const changeActiveNav = useCallback((id: string) => {
     if (navItems.find((item) => item.id === id)) {

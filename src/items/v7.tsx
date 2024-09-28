@@ -96,7 +96,13 @@ fetch(url, {
 >
 > It is possible... But it's madness, it's stupid...
 >
-> So... next?
+> ---
+>
+> MOOOOOOOM I want Websockets!
+>
+> No sweetheart, we have websockets at home!
+>
+> Websockets at home: next?
 
 `,
   boardHook: makeBoardHook(useOneFetch),
