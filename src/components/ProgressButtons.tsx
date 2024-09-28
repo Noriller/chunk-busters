@@ -2,6 +2,9 @@ import { usePostToApi } from '@/items/utils/fetch';
 import { initProgress, useProgress } from './ProgressContext';
 import { Button } from './ui/button';
 
+// +speed => -delay
+// -speed => +delay
+
 export function ProgressButtonsGrid() {
   const post = usePostToApi();
   return (
@@ -12,23 +15,23 @@ export function ProgressButtonsGrid() {
       <div className="flex gap-4">
         <div className="flex gap-4">
           <Button
-            onClick={() => post({ api: 0, key: 'quantity', value: +1000 })}
+            onClick={() => post({ api: 0, key: 'quantity', value: +500 })}
           >
-            Quantity +1000
+            +Quantity
           </Button>
           <Button
-            onClick={() => post({ api: 0, key: 'quantity', value: -1000 })}
+            onClick={() => post({ api: 0, key: 'quantity', value: -500 })}
           >
-            Quantity -1000
+            -Quantity
           </Button>
         </div>
         <VerticalDivider />
         <div className="flex gap-4">
-          <Button onClick={() => post({ api: 0, key: 'speed', value: +50 })}>
-            Speed +50
+          <Button onClick={() => post({ api: 0, key: 'speed', value: -25 })}>
+            +Speed
           </Button>
-          <Button onClick={() => post({ api: 0, key: 'speed', value: -50 })}>
-            Speed -50
+          <Button onClick={() => post({ api: 0, key: 'speed', value: +25 })}>
+            -Speed
           </Button>
         </div>
       </div>
@@ -65,36 +68,36 @@ function BoardButtons({ board }: { board: number }) {
         <Button
           size="sm"
           variant="ghost"
-          onClick={() => post({ api: board, key: 'quantity', value: +1000 })}
+          onClick={() => post({ api: board, key: 'quantity', value: +500 })}
           disabled={disabled}
         >
-          {board} | +1000
+          {board} | +QTD
         </Button>
         <Button
           size="sm"
           variant="ghost"
-          onClick={() => post({ api: board, key: 'quantity', value: -1000 })}
+          onClick={() => post({ api: board, key: 'quantity', value: -500 })}
           disabled={disabled}
         >
-          {board} | -1000
+          {board} | -QTD
         </Button>
       </div>
       <div className="flex flex-col gap-2">
         <Button
           size="sm"
           variant="ghost"
-          onClick={() => post({ api: board, key: 'speed', value: +50 })}
+          onClick={() => post({ api: board, key: 'speed', value: -25 })}
           disabled={disabled}
         >
-          {board} | +50
+          {board} | +SPD
         </Button>
         <Button
           size="sm"
           variant="ghost"
-          onClick={() => post({ api: board, key: 'speed', value: -50 })}
+          onClick={() => post({ api: board, key: 'speed', value: +25 })}
           disabled={disabled}
         >
-          {board} | -50
+          {board} | -SPD
         </Button>
       </div>
     </div>
