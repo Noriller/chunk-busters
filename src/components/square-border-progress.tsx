@@ -13,10 +13,11 @@ export function BorderProgress({
   children: React.ReactNode;
   boardIndex: number;
 }) {
-  const { getProgress } = useProgress();
+  const { getProgress, defer } = useProgress();
   const progressBase = getProgress(boardIndex);
   // defer the progress to avoid slowdown of the rest
-  const progress = useDeferredValue(progressBase);
+  const progressDefer = useDeferredValue(progressBase);
+  const progress = defer ? progressBase : progressDefer;
 
   const borderSegments = useMemo(() => {
     const segments = [];
@@ -47,7 +48,9 @@ export function BorderProgress({
                 width: '1em',
                 height: '1em',
                 ...style,
-                background: isFilled ? randomColor() : 'transparent',
+                background: isFilled
+                  ? getRainbowColor(side, sidePosition, boardIndex)
+                  : 'transparent',
               }}
             />
           );
@@ -95,6 +98,25 @@ function makeStyle(side: number, sidePosition: number) {
   }
 }
 
-function randomColor() {
-  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+function getRainbowColor(
+  side: number,
+  sidePosition: number,
+  boardIndex: number,
+) {
+  // Calculate the position of this segment in the overall border
+  const overallPosition = side * SEGMENTS_PER_SIDE + sidePosition;
+
+  // Map this position to a hue value (0-360)
+  // Red (0°/360°) → Orange (30°) → Yellow (60°)
+  // → Green (120°) → Cyan (180°) → Blue (240°)
+  // → Blue (240°) → Purple (270°) → Pink (300°)
+
+  // each boardIndex will start with a different hue
+  // then wrap around finishing the (0-360) range
+  const hue = Math.floor(
+    (boardIndex * 40 + (overallPosition / TOTAL_SEGMENTS) * 360) % 360,
+  );
+
+  // Use fixed saturation and lightness for vibrant colors
+  return `hsl(${hue}, 100%, 70%)`;
 }
