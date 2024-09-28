@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { BorderedBox } from './bordered-box';
 import { Button } from './ui/button';
 import { useSearchParamsState } from './useSearchParamsState';
-import { BorderedBox } from './bordered-box';
 
 type SpeedContext = {
   speed: number | (() => number);

@@ -24,19 +24,26 @@ function useSearchParams(spName: string) {
 
   return [get, set] as const;
 }
-export function useSearchParamsState<T extends string>(
+
+export function useSearchParamsState<T extends string | null>(
   spName: string,
   defaultValue: string | null = null,
 ) {
   const [get, set] = useSearchParams(spName);
   const [state, setState] = useState(get() || defaultValue);
-  const update = useCallback((value: string | null) => {
-    setState(value as any);
-    set(String(value));
-  }, []);
+  const update = useCallback(
+    (value: T | ((old: T) => T) | null) => {
+      setState((old) => {
+        const newValue = typeof value === 'function' ? value(old as T) : value;
+        set(newValue === null || newValue === '' ? null : newValue);
+        return newValue;
+      });
+    },
+    [state],
+  );
 
   return [state, update] as [
-    typeof defaultValue extends null ? T | null : T,
+    typeof defaultValue extends T ? T | null : T,
     typeof update,
   ];
 }

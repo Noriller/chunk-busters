@@ -90,6 +90,14 @@ fetch(url, {
 });
 \`\`\`
 
+---
+
+> I know what you're thinking...
+>
+> It is possible... But it's madness, it's stupid...
+>
+> So... next?
+
 `,
   boardHook: makeBoardHook(useOneFetch),
 } satisfies NavItem;
