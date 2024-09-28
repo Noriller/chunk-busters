@@ -19,6 +19,12 @@ const generateWavyPath = () => {
   return path;
 };
 
+function getHomeWithCurrentSearchParams() {
+  const sp = new URLSearchParams(window.location.search);
+  sp.delete('nav');
+  return `${window.location.pathname}?${sp.toString()}`;
+}
+
 export function FancyTitle() {
   const [path, setPath] = useState(generateWavyPath());
 
@@ -32,7 +38,9 @@ export function FancyTitle() {
   return (
     <div className="relative inline-block">
       <h1 className="relative inline-block text-center text-3xl font-bold">
-        Chunk-Busters: Don't cross the streams
+        <a href={getHomeWithCurrentSearchParams()}>
+          Chunk-Busters: Don't cross the streams
+        </a>
         <span className="w-full">
           <svg width="100%" height="30" className="overflow-clip">
             <defs>
