@@ -6,7 +6,10 @@ import {
   useState,
 } from 'react';
 import { isIndexValid, type Indexes } from './board/useBoards';
+import { BorderedBox } from './bordered-box';
 import { getActualSize } from './SizeContext';
+import { Button } from './ui/button';
+import { useSearchParamsState } from './useSearchParamsState';
 
 type Progress = Record<Indexes, number>;
 
@@ -27,6 +30,8 @@ type ProgressContext = {
   changeCurrent: (index: number, value: number) => void;
   changeMax: (index: number, value: number) => void;
   reset: () => void;
+  defer: boolean;
+  ProgressSwitcher: React.ReactNode;
 };
 
 const context = createContext<ProgressContext>(null!);
@@ -38,6 +43,7 @@ export function ProgressContextProvider({
 }) {
   const [current, setCurrent] = useState(initProgress);
   const [max, setMax] = useState(initProgress);
+  const [defer, setDefer] = useSearchParamsState<'' | 'true'>('defer');
 
   const changeCurrent = useCallback(
     (index: number, current: number) => {
@@ -80,14 +86,38 @@ export function ProgressContextProvider({
     setCurrent(initProgress);
   }, []);
 
+  const ProgressSwitcher = useMemo(() => {
+    return (
+      <BorderedBox
+        name="Progress Controls"
+        description="Controls the progress border."
+      >
+        <Button
+          variant={defer === 'true' ? 'secondary' : 'default'}
+          onClick={() => setDefer(defer === 'true' ? null : 'true')}
+          className="flex flex-col p-6"
+        >
+          <span className="inline-block">
+            Defer Progress Values: {defer === null ? 'ON' : 'OFF'}
+          </span>
+          <span className="inline-block">
+            (ON for better performance, OFF for better UX)
+          </span>
+        </Button>
+      </BorderedBox>
+    );
+  }, [defer]);
+
   const value = useMemo(
     () => ({
       getProgress,
       changeCurrent,
       changeMax,
       reset,
+      defer: Boolean(defer),
+      ProgressSwitcher,
     }),
-    [changeCurrent, changeMax, getProgress, reset],
+    [changeCurrent, changeMax, getProgress, reset, defer, ProgressSwitcher],
   );
 
   return <context.Provider value={value}>{children}</context.Provider>;

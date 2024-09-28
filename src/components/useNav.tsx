@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { Board } from './board';
 import { useRandomBoards } from './board/useBoards';
 import { HighlightedMarkdown } from './HighlightedMarkdown';
+import { useProgress } from './ProgressContext';
 import { useSize } from './SizeContext';
 import { useSpeed } from './SpeedContext';
 import { Button } from './ui/button';
@@ -33,6 +34,7 @@ export function useNav() {
   const [activeNav, setActiveNav] = useSearchParamsState('nav', 'home');
   const { speed, SpeedSwitcher } = useSpeed();
   const { size, SizeSwitcher } = useSize();
+  const { defer, ProgressSwitcher } = useProgress();
 
   const navContent = useMemo(() => {
     const getContent = () => {
@@ -57,9 +59,10 @@ export function useNav() {
         </HighlightedMarkdown>
         {isNavs && SpeedSwitcher}
         {isNavs && SizeSwitcher}
+        {isNavs && ProgressSwitcher}
       </>
     );
-  }, [activeNav, speed, size]);
+  }, [activeNav, speed, size, defer]);
 
   const changeActiveNav = useCallback((id: string) => {
     if (navItems.find((item) => item.id === id)) {
