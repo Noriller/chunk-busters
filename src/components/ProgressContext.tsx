@@ -95,7 +95,8 @@ export function ProgressContextProvider({
   const getProgress = useCallback(
     (index: number) => {
       if (isIndexValid(index)) {
-        return Math.floor((current[index] / max[index]) * 100);
+        const progress = Math.floor((current[index] / max[index]) * 100);
+        return progress > 99 || isNaN(progress) ? 100 : progress;
       }
       return 0;
     },
@@ -133,7 +134,7 @@ export function ProgressContextProvider({
         {Boolean(extra) && <ProgressButtonsGrid />}
       </BorderedBox>
     );
-  }, [defer, extra]);
+  }, [defer, extra, max]);
 
   const value = useMemo(
     () => ({
