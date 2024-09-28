@@ -1,6 +1,13 @@
 // @ts-check
 import http from 'node:http';
 
+let MAX_SIZE = 0;
+let DELAY = /** @type {number|undefined} */(undefined);
+let GENERATED = 0;
+let isOpen = true;
+
+const getShouldStop = (n = GENERATED) => !isOpen || n > MAX_SIZE;
+
 http.createServer(async (req, res) => {
   // set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -10,25 +17,53 @@ http.createServer(async (req, res) => {
   if (
     // in case of opening from browser
     req.url === '/favicon.ico'
-    // not a GET request
-    || req.method !== 'GET'
+    // not a GET/POST request
+    || !['GET', 'POST'].includes(/** @type {string} */(req.method))
   ) {
     res.writeHead(404);
     return res.end();
   }
 
-  console.log(`🚀 ~ instance ~ req.url:`, req.url);
+  console.log(`🚀 ~ instance ~ req`, { method: req.method, url: req.url });
+
+  if (req.method === 'POST') {
+    // example: http://localhost:58080/{api}/{quantity|speed}/{value +-}
+    const [, , keyReq, valueReq] = req.url?.split('/') || [];
+
+    const key = /** @type {'quantity' | 'speed'} */(keyReq);
+    const value = Number(valueReq);
+
+    if (key === 'quantity') {
+      if (getShouldStop()) {
+        res.statusCode = 200;
+        return res.end(JSON.stringify(false));
+      }
+
+      const newMax = MAX_SIZE + value;
+      MAX_SIZE = newMax < 0 ? 0 : newMax;
+
+      res.statusCode = 200;
+      return res.end(JSON.stringify(true));
+    }
+
+    const newDelay = (DELAY ?? 0) + value;
+    DELAY = newDelay < 2 ? 1 : newDelay;
+
+    res.statusCode = 200;
+    return res.end(JSON.stringify(true));
+  }
 
   // example: http://localhost:58080/{slug to print}/{max POW}/{delay in ms}
-  const [, slug, number = 1, delay = undefined] = req.url?.split('/') || [];
+  const [, slug, number = 1, delayReq = undefined] = req.url?.split('/') || [];
 
-  const max = Number(number) ? eval('1e' + number) : 1e1;
+  DELAY = Number(delayReq);
+  MAX_SIZE = Number(number) ? eval('1e' + number) : 1e1;
 
-  console.log(`🚀 ~ instance: Starting`, { slug, max, delay });
+  console.log(`🚀 ~ instance: Starting`, { slug, max: MAX_SIZE, delay: DELAY });
 
   const dataGenerator = infiniteData(slug);
 
-  let isOpen = true;
+  isOpen = true;
   req.on('close', () => {
     isOpen = false;
     console.log('connection closed');
@@ -37,23 +72,23 @@ http.createServer(async (req, res) => {
   // you can call directly on browser to see it streaming data in real time!
   res.writeHead(200, { 'Content-Type': 'text; charset=utf-8' });
 
-  let generated = 0;
+  GENERATED = 0;
 
   for await (const [n, data] of dataGenerator) {
-    if (!isOpen || n > max) {
+    if (getShouldStop(n)) {
       break;
     }
     // keep how many items we have generated
-    generated = n;
+    GENERATED = n;
 
     // some random delay is added to simulate real conditions
     // of generating/retrieving data
     // it will sleep between delay ms +/- 50%
-    await Sleep(delay ? Number(delay) : undefined);
+    await Sleep(DELAY ?? undefined);
     res.write(data);
   }
 
-  console.log(`🚀 ~ instance ~ Ending at ${generated}`, { slug, max, delay });
+  console.log(`🚀 ~ instance ~ Ending at ${GENERATED}`, { slug, max: MAX_SIZE, delay: DELAY });
   return res.end();
 })
   .listen(process.env.PORT || 58080, () => {
