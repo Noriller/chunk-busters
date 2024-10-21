@@ -37,7 +37,7 @@ export function FancyTitle() {
 
   return (
     <div className="relative inline-block">
-      <h1 className="relative inline-block text-center text-3xl font-bold">
+      <h1 className="relative inline-block text-center text-2xl font-bold xl:text-3xl">
         <a href={getHomeWithCurrentSearchParams()}>
           Chunk-Busters: Don't cross the streams
         </a>
