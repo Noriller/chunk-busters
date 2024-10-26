@@ -3,12 +3,6 @@ import { Button } from './ui/button';
 import { useSearchParamsState } from './useSearchParamsState';
 import { BorderedBox } from './bordered-box';
 
-type SizeContext = {
-  size: number | (() => number);
-  SizeSwitcher: ReactNode;
-};
-
-const context = createContext<SizeContext>(null!);
 
 function randomBetween(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -31,11 +25,7 @@ const Sizes = {
   chaotic: () => randomBetween(1, 6),
 };
 
-export function SizeContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function useSizeValue() {
   const [size, setSize] = useSearchParamsState<keyof typeof Sizes>(
     'size',
     '100' as keyof typeof Sizes,
@@ -101,6 +91,19 @@ export function SizeContextProvider({
     [size],
   );
 
+  return value;
+}
+
+type SizeContext = ReturnType<typeof useSizeValue>;
+
+const context = createContext<SizeContext>(null!);
+
+export function SizeContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const value = useSizeValue();
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 

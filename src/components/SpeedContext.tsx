@@ -3,13 +3,6 @@ import { BorderedBox } from './bordered-box';
 import { Button } from './ui/button';
 import { useSearchParamsState } from './useSearchParamsState';
 
-type SpeedContext = {
-  speed: number | (() => number);
-  SpeedSwitcher: ReactNode;
-};
-
-const context = createContext<SpeedContext>(null!);
-
 function randomBetween(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min);
 }
@@ -25,11 +18,7 @@ const Speeds = {
   chaotic: () => randomBetween(0, 200),
 };
 
-export function SpeedContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function useSpeedValue() {
   const [speed, setSpeed] = useSearchParamsState<keyof typeof Speeds>(
     'speed',
     'fast' as keyof typeof Speeds,
@@ -82,6 +71,20 @@ export function SpeedContextProvider({
     }),
     [speed],
   );
+
+  return value;
+}
+
+type SpeedContext = ReturnType<typeof useSpeedValue>;
+
+const context = createContext<SpeedContext>(null!);
+
+export function SpeedContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const value = useSpeedValue();
 
   return <context.Provider value={value}>{children}</context.Provider>;
 }

@@ -26,36 +26,7 @@ export const initProgress: Progress = {
   9: 0,
 };
 
-type ProgressContext = {
-  getProgress: (board: number) => number;
-  changeCurrent: (board: number, value: number) => void;
-  changeMax: (board: number, value: number) => void;
-  addToMax: (board: number, value: number) => void;
-  reset: () => void;
-  defer: boolean;
-  extra: boolean;
-  ProgressSwitcher: React.ReactNode;
-  useExtra: (bol: boolean) => void;
-};
-
-const context = createContext<ProgressContext>(null!);
-
-/**
- * This context is used to track the progress of the API calls
- *
- * Changing the max values might end in a state it stop working
- * as it should, but it's not a big deal
- *
- * Normally it would get the max value that it's expected to receive
- * and the current count of values received and calculate the progress
- * that is then used in the progress border and if you can still change
- * the values on the fly
- */
-export function ProgressContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function useProgressValue() {
   const [current, setCurrent] = useState(initProgress);
   const [max, setMax] = useState(initProgress);
   const [defer, setDefer] = useSearchParamsState<'' | 'true'>('defer');
@@ -172,6 +143,30 @@ export function ProgressContextProvider({
     ],
   );
 
+  return value;
+}
+
+type ProgressContext = ReturnType<typeof useProgressValue>;
+
+const context = createContext<ProgressContext>(null!);
+
+/**
+ * This context is used to track the progress of the API calls
+ *
+ * Changing the max values might end in a state it stop working
+ * as it should, but it's not a big deal
+ *
+ * Normally it would get the max value that it's expected to receive
+ * and the current count of values received and calculate the progress
+ * that is then used in the progress border and if you can still change
+ * the values on the fly
+ */
+export function ProgressContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const value = useProgressValue();
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
