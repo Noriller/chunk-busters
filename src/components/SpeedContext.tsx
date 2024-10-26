@@ -15,6 +15,9 @@ function randomBetween(min: number, max: number) {
 }
 
 const Speeds = {
+  // 1 is the lowest I could go without
+  // blocking the browser, and even then
+  // it still might lag too much sometimes
   ultraFast: 1,
   fast: 10,
   slow: 100,

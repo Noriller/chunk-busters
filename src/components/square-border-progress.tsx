@@ -15,7 +15,7 @@ export function BorderProgress({
 }) {
   const { getProgress, defer } = useProgress();
   const progressBase = getProgress(boardIndex);
-  // defer the progress to avoid slowdown of the rest
+  // defer the progress to avoid slowdown of the application
   const progressDefer = useDeferredValue(progressBase);
   const progress = defer ? progressBase : progressDefer;
 

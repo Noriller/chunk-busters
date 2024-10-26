@@ -71,7 +71,7 @@ function BoardButtons({ board }: { board: number }) {
           onClick={() => post({ api: board, key: 'quantity', value: +500 })}
           disabled={disabled}
         >
-          {board} | +QTD
+          {board} | +QTY
         </Button>
         <Button
           size="sm"
@@ -79,7 +79,7 @@ function BoardButtons({ board }: { board: number }) {
           onClick={() => post({ api: board, key: 'quantity', value: -500 })}
           disabled={disabled}
         >
-          {board} | -QTD
+          {board} | -QTY
         </Button>
       </div>
       <div className="flex flex-col gap-2">

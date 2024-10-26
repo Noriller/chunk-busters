@@ -25,6 +25,9 @@ function useSearchParams(spName: string) {
   return [get, set] as const;
 }
 
+/**
+ * Basically its a useState hook but in sync with the search params
+ */
 export function useSearchParamsState<T extends string | null>(
   spName: string,
   defaultValue: string | null = null,

@@ -27,10 +27,10 @@ export const initProgress: Progress = {
 };
 
 type ProgressContext = {
-  getProgress: (index: number) => number;
-  changeCurrent: (index: number, value: number) => void;
-  changeMax: (index: number, value: number) => void;
-  addToMax: (index: number, value: number) => void;
+  getProgress: (board: number) => number;
+  changeCurrent: (board: number, value: number) => void;
+  changeMax: (board: number, value: number) => void;
+  addToMax: (board: number, value: number) => void;
   reset: () => void;
   defer: boolean;
   extra: boolean;
@@ -40,6 +40,17 @@ type ProgressContext = {
 
 const context = createContext<ProgressContext>(null!);
 
+/**
+ * This context is used to track the progress of the API calls
+ *
+ * Changing the max values might end in a state it stop working
+ * as it should, but it's not a big deal
+ *
+ * Normally it would get the max value that it's expected to receive
+ * and the current count of values received and calculate the progress
+ * that is then used in the progress border and if you can still change
+ * the values on the fly
+ */
 export function ProgressContextProvider({
   children,
 }: {
@@ -51,24 +62,24 @@ export function ProgressContextProvider({
   const [extra, setExtra] = useSearchParamsState<'' | 'true'>('extra');
 
   const changeCurrent = useCallback(
-    (index: number, current: number) => {
-      if (isIndexValid(index)) {
+    (board: number, value: number) => {
+      if (isIndexValid(board)) {
         setCurrent((prev) => ({
           ...prev,
-          [index]: current,
+          [board]: value,
         }));
       }
     },
     [max],
   );
 
-  const changeMax = useCallback((index: number, value: number) => {
+  const changeMax = useCallback((board: number, value: number) => {
     const size = getActualSize(value);
-    if (isIndexValid(index)) {
-      setMax((prev) => ({ ...prev, [index]: size }));
+    if (isIndexValid(board)) {
+      setMax((prev) => ({ ...prev, [board]: size }));
     }
 
-    if (index === 0) {
+    if (board === 0) {
       setMax(
         Object.fromEntries(
           Object.keys(initProgress).map((k) => [Number(k), size]),
@@ -77,12 +88,12 @@ export function ProgressContextProvider({
     }
   }, []);
 
-  const addToMax = useCallback((index: number, value: number) => {
-    if (isIndexValid(index)) {
-      setMax((prev) => ({ ...prev, [index]: prev[index] + value }));
+  const addToMax = useCallback((board: number, value: number) => {
+    if (isIndexValid(board)) {
+      setMax((prev) => ({ ...prev, [board]: prev[board] + value }));
     }
 
-    if (index === 0) {
+    if (board === 0) {
       setMax(
         (old) =>
           Object.fromEntries(
@@ -93,9 +104,9 @@ export function ProgressContextProvider({
   }, []);
 
   const getProgress = useCallback(
-    (index: number) => {
-      if (isIndexValid(index)) {
-        const progress = Math.floor((current[index] / max[index]) * 100);
+    (board: number) => {
+      if (isIndexValid(board)) {
+        const progress = Math.floor((current[board] / max[board]) * 100);
         return progress > 99 || isNaN(progress) ? 100 : progress;
       }
       return 0;

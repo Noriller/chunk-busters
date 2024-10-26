@@ -13,8 +13,14 @@ type ParsedReturn = {
   done: boolean;
 };
 
-
+/**
+ * Recursively parses the whole string
+ * and returns the result (array of boards and lights),
+ * the remaining string and if done
+ */
 export function parseWholeString(str: string): ParsedReturn {
+  // the values come separated by newlines
+  // so we check if we have anything to parse
   if (!str || !str.includes('\n')) {
     return {
       result: [],
@@ -35,14 +41,17 @@ export function parseWholeString(str: string): ParsedReturn {
   };
 }
 
+/**
+ * The lights can be "on" or "off", but since
+ * we will receive multiple values, we accumulate
+ * them in one object with the "final" value
+ * after going through all of them
+ */
 export function accumulateValues(values: ParsedLine | ParsedLine[], init = {} as BoardLights) {
   const arr = Array.isArray(values) ? values : [values];
 
   return arr
-    .map(({ board, light }) => {
-      return [board, light];
-    })
-    .reduce((acc, [board, light]) => {
+    .reduce((acc, { board, light }) => {
       if (!isIndexValid(board) || !isIndexValid(light)) {
         return acc;
       }

@@ -15,13 +15,23 @@ function makeLights(fn = random) {
   );
 }
 
+// this calls makeLights() that will call makeLights() again for each index
+// the first create 9 "boards", the second 81 "lights" (9 per board)
 const makeRandomBoard = (): BoardLights => makeLights(makeLights);
+// this calls makeLights() that will create 9 boards
+// but then again, but this time it will call with all "off" for each board
 export function makeOffBoard(): BoardLights {
   return makeLights(() => makeLights(() => false));
 }
 
 const randomIndex = () => Math.floor(Math.random() * 10) as Indexes;
 
+/**
+ * This hook will create a board with random lights
+ * and toggle one of them every 100ms
+ *
+ * to be used as a placeholder
+ */
 export function useRandomBoards() {
   const { lights, toggle } = useLights(makeRandomBoard());
 
@@ -38,6 +48,10 @@ export function useRandomBoards() {
 
 const { getMounted, setMounted } = mountedHack();
 
+/**
+ * this is a HOC for the hook that will set the board lights
+ * this controls the lights state and if it should abort the fetches
+ */
 export function makeBoardHook(
   createAsyncFunc: (
     setLights: SetLights,
@@ -56,7 +70,11 @@ export function makeBoardHook(
       const controller = new AbortController();
 
       asyncFunc(controller.signal).catch(() => {
-        /** intentionally blank */
+        /**
+         * intentionally blank
+         *
+         * not going to handle errors in this demo
+         */
       });
 
       return () => {
@@ -84,6 +102,7 @@ export function useLights(init: BoardLights) {
     }
 
     return setLights((lights) => {
+      // accept the boolean or invert the current value
       lights[board][light] = on ?? !lights[board][light];
       return {
         ...lights,

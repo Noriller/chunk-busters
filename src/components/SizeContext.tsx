@@ -19,6 +19,13 @@ const Sizes = {
   '100': 2,
   '1_000': 3,
   '10_000': 4,
+  // big numbers like this will generate GBs of data
+  // (this happens because of the "padding" added to the strings)
+  // in the normal `await json`, the browser WILL run out of memory
+  // but even streaming I had problems with it
+  // this is most likely because of some memory leak
+  // since this is a demo, I won't worry about it
+  // I did try to find the source of it, but I couldn't find it
   '100_000': 5,
   '1_000_000': 6,
   chaotic: () => randomBetween(1, 6),

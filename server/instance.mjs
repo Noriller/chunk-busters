@@ -42,18 +42,22 @@ http.createServer(async (req, res) => {
       }
 
       const newMax = MAX_SIZE + value;
+      // value can be negative, so check for that
       MAX_SIZE = newMax < 0 ? 0 : newMax;
 
-      console.log(`🚀 ~ http.createServer ~ MAX_SIZE:`, MAX_SIZE)
+      console.log(`🚀 ~ http.createServer ~ MAX_SIZE:`, MAX_SIZE);
 
       res.statusCode = 200;
       return res.end(JSON.stringify(true));
     }
 
     const newDelay = (DELAY ?? 0) + value;
+    // value can be negative, so check for that
+    // while delay could be 0, it might be "too fast"
+    // so I found better to have a minimum of 1
     DELAY = newDelay < 2 ? 1 : newDelay;
 
-    console.log(`🚀 ~ http.createServer ~ DELAY:`, DELAY)
+    console.log(`🚀 ~ http.createServer ~ DELAY:`, DELAY);
 
     res.statusCode = 200;
     return res.end(JSON.stringify(true));
@@ -67,8 +71,6 @@ http.createServer(async (req, res) => {
 
   console.log(`🚀 ~ instance: Starting`, { slug, max: MAX_SIZE, delay: DELAY });
 
-  const dataGenerator = infiniteData(slug);
-
   isOpen = true;
   req.on('close', () => {
     isOpen = false;
@@ -79,6 +81,8 @@ http.createServer(async (req, res) => {
   res.writeHead(200, { 'Content-Type': 'text; charset=utf-8' });
 
   GENERATED = 0;
+
+  const dataGenerator = infiniteData(slug);
 
   for await (const [n, data] of dataGenerator) {
     if (getShouldStop(n)) {
@@ -101,6 +105,11 @@ http.createServer(async (req, res) => {
     console.log(`🚀 ~ instance ~ listening on port ${process.env.PORT || 58080}`);
   });
 
+// this is a generator function
+// each time its called it handles
+// how many items it already generated
+// then on each call of the iterator
+// it will yield a new item
 function* infiniteData(
   /** @type {string} */ slug,
 ) {
@@ -109,10 +118,9 @@ function* infiniteData(
   const extraPadding = 'this thing is just to make each piece of data bigger '.repeat(100);
 
   while (true) {
-    // while this could be an object
-    // but we will just use a string
-    // to make it easier to parse it
-    // split on space and break on \n
+    // while this could be an object we will just use a string
+    // a simple string separated by newlines is easier to parse
+    // split the chunk on space and break on \n
     yield /** @type {const} */([++i, `${slug} ${randomNumber()} ${extraPadding} \n`]);
   }
 }

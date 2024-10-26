@@ -3,7 +3,6 @@ import http from 'node:http';
 
 let isOpen = true;
 
-// const BASE_URL = (/** @type {number} */ n) => `http://localhost/api/${n}`;
 const BASE_URL = (/** @type {number} */ n) => `http://instance${n}:58080/${n}`;
 
 const getUrl = (
@@ -39,11 +38,13 @@ http.createServer(async (req, res) => {
 
     res.setHeader('Content-Type', 'application/json');
 
+    // check if the GET request is still open
     if (!isOpen) {
       res.statusCode = 200;
       return res.end(JSON.stringify(false));
     }
 
+    // call each instance
     const results = await Promise.all(Array
       .from({ length: 9 }, (_, i) => i + 1)
       .map((api) => {
@@ -85,6 +86,7 @@ http.createServer(async (req, res) => {
   await Promise.all(
     Array.from({ length: 9 }, (_, i) => {
       const api = i + 1;
+      // call each instance
       return fetch(getUrl(api, size, delay), {
         signal
       })
@@ -95,28 +97,42 @@ http.createServer(async (req, res) => {
             return;
           }
 
+          // accumulator for the results
           let buffer = '';
 
           while (true) {
             const { done, value } = await reader.read();
 
+            // it can be done, be aborted,
+            // or the whole request is closed
+            // there is some redundancy here
             if (done || signal.aborted || !isOpen) {
               reader.cancel(signal.reason);
               break;
             }
 
             if (value) {
+              // accumulate the value
               buffer = buffer + decoder.decode(value);
 
               while (true) {
+                // the values are separated by newlines
+                // so, we check if there's one whole chunk ready
                 const index = buffer.indexOf('\n');
                 if (index === -1) {
+                  // if not, we bail
+                  // and wait for the next chunk
                   break;
                 }
+
+                // get the chunk
                 const chunk = buffer.substring(0, index + 1);
                 count[api] += 1;
 
+                // send the chunk
                 res.write(chunk);
+
+                // remove the chunk from the buffer
                 buffer = buffer.substring(index + 1);
               }
             }

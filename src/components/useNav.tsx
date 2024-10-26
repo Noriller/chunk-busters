@@ -88,8 +88,18 @@ export function useNav() {
     useRandomBoards;
 
   const BoardWithHook = useCallback(() => {
-    return <Board board={boardHook()} key={speed.toString()} />;
-  }, [boardHook, speed]);
+    return (
+      <Board
+        board={boardHook()}
+        key={
+          speed.toString() +
+          size.toString() +
+          defer.toString() +
+          extra.toString()
+        }
+      />
+    );
+  }, [boardHook, speed, size, defer, extra]);
 
   return {
     navContent,
