@@ -16,9 +16,12 @@ const decoder = new TextDecoder('utf-8');
 // and as you'll see... there's better ways to solve this
 const BASE_URL = (api: number) => `http://localhost/api/${api}`;
 // but changing to this one would "fix" the http/1 problem
-// const BASE_URL = (api: number) => `http://localhost:5888${api}/${api}`;;
+// const BASE_URL = (api: number) => `http://localhost:5888${api}/${api}`;
 
 /**
+ * The "normal" fetch function that awaits
+ * the data and then return something
+ *
  * @param speedHack http max parallel connections is 6 for most modern browsers
  * so, we hack here so make it feels like we are doing more requests
  * remember: this is just a demo, will be a presentation...
@@ -80,6 +83,10 @@ export const useFetchApi = (speedHack = false) => {
   };
 };
 
+/**
+ * stream based fetch that will do something as
+ * the data comes in
+ */
 export const useStreamFetchApi = (
   setLights: SetLights,
   counterUtils = boardCounter(),
@@ -166,6 +173,9 @@ export function mountedHack() {
   };
 }
 
+/**
+ * keep track of the number of times a board has been toggled
+ */
 export function boardCounter() {
   const resetCount = () =>
     Object.fromEntries(
@@ -189,6 +199,10 @@ export function boardCounter() {
   };
 }
 
+/**
+ * takes the cloned reader to keep track
+ * of the number of how much data has been read already
+ */
 async function parseReaderClone(
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined,
   signal: AbortSignal,
@@ -220,6 +234,18 @@ async function parseReaderClone(
 export function usePostToApi() {
   const { addToMax } = useProgress();
 
+  // we use this one here because
+  // in case of playing with the api
+  // it might hit the limit of connections
+  // so, this one bypass the limit
+  const BASE_URL_POST = (api: number) => {
+    if (api === 0) {
+      return `http://localhost:58880`;
+    }
+
+    return `http://localhost:5888${api}/${api}`;
+  };
+
   return async ({
     api,
     key,
@@ -229,20 +255,28 @@ export function usePostToApi() {
     key: 'quantity' | 'speed';
     value: number;
   }) => {
+    // will respond with a boolean based
+    // on if it was successful or not
+    // in changing the value
     const result: boolean | boolean[] = await fetch(
-      `${BASE_URL(api)}/${key}/${value}`,
+      `${BASE_URL_POST(api)}/${key}/${value}`,
       {
         method: 'POST',
       },
     ).then((res) => res.json());
 
+    // in case of qty, we want to update the max
+    // for "api > 0", true or skip
+    // for api 0 ("change all"), even if all false
+    // array of booleans is still truthy
     if (result && key === 'quantity') {
       if (api > 0 || !Array.isArray(result)) {
         return addToMax(api, value);
       }
 
-      result.forEach((r, i) => {
-        r && addToMax(i + 1, value);
+      result.forEach((result, index) => {
+        // if true (changed), update the max
+        result && addToMax(index + 1, value);
       });
     }
   };

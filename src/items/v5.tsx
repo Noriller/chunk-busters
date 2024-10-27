@@ -28,7 +28,7 @@ await Promise.all([
 
 And for each one of them we will start rendering them as they come.
 
-Again... http/1 means we can't do all 9 fetches in one batch.
+Again... \`http/1\` means we can't do all 9 fetches in one batch.
 
 ---
 

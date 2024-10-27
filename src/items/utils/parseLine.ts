@@ -14,31 +14,33 @@ type ParsedReturn = {
 };
 
 /**
- * Recursively parses the whole string
+ * Parses the whole string
  * and returns the result (array of boards and lights),
  * the remaining string and if done
+ *
+ * first version used recursion, but too many items
+ * caused a stack overflow
  */
 export function parseWholeString(str: string): ParsedReturn {
-  // the values come separated by newlines
-  // so we check if we have anything to parse
-  if (!str || !str.includes('\n')) {
-    return {
-      result: [],
-      remaining: str,
-      done: str.length === 0,
-    };
+  let result = [] as ParsedReturn['result'];
+  let remaining = str;
+  let done = false;
+
+  while (!done) {
+    // the values come separated by newlines
+    // so we check if we have anything to parse
+    const separatorIndex = remaining.indexOf('\n');
+    if (separatorIndex === -1) {
+      done = true;
+    } else {
+      result = result.concat(
+        parseLine(remaining.slice(0, separatorIndex)),
+      );
+      remaining = remaining.slice(separatorIndex + 1);
+    }
   }
 
-  const separatorIndex = str.indexOf('\n');
-  const line = str.slice(0, separatorIndex);
-  const rest = str.slice(separatorIndex + 1);
-
-  const { result, remaining, done } = parseWholeString(rest);
-  return {
-    result: [...result, parseLine(line)],
-    remaining,
-    done,
-  };
+  return { result, remaining, done };
 }
 
 /**

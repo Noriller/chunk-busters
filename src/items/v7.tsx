@@ -15,7 +15,7 @@ As the backend receives the data from the sources, it sends it to us... in chunk
 
 The frontend, in turn, renders the data as it comes.
 
-It might be a few KB or maybe a few GB!
+It might be a few _KB_ or maybe a LOT of _GBs_!
 
 Doesn't matter because we use the data as it come and then throw away what we don't need anymore.
 
@@ -46,6 +46,10 @@ fetch(url, {
   // this is a \`ReadableStream\`
   // (there are other types of streams and ways to consume them)
   const reader = res.body?.getReader();
+
+  // this shouldn't happen
+  // but since the type say it can be nullish
+  // we check for it
   if (!reader) {
     return;
   }
@@ -69,18 +73,38 @@ fetch(url, {
 
     // if we have a value
     if (value) {
-      buffer = buffer + new TextDecoder().decode(value);
+      // the value is a Uint8Array
+      // so we convert it to a string
+      // there are other encodings,
+      // but usually we want utf-8
+      const decoder = new TextDecoder('utf-8').decode;
+
+      // decode and add to the buffer
+      buffer = buffer + decoder(value);
 
       // here is where the magic happens!
       // we check if we can consume something from the buffer
+      // in a simple string, the slice we will use
+      // if its JSON, the slice that can be parsed
+      // note that for JSON, we can split the stringified
+      // JSON into chunks that can be parsed (\`JSON.parse\`)
+      // but you can also parse chunks of the object/array
+      // as it comes and accumulate them somewhere to be used
+      // this is, of course, a lot more complicated
       if (canConsumeSomething(buffer)) {
-        const [chunk, remaining] = consumeSomething(buffer);
         // do something with the chunk
+        // for example, split into what
+        // will be consumed and the remaining
+        // this can be as simple as:
+        // const splitIndex = buffer.indexOf(separator);
+        // const chunk = buffer.slice(0, splitIndex);
+        // const remaining = buffer.slice(splitIndex + 1);
+        const [chunk, remaining] = consumeSomething(buffer);
 
-        // in the frontend
+        // in the frontend, render the chunk
         renderChunk(chunk);
-        // in the backend
-        sendResponse(chunk);
+        // in the backend, send the chunk
+        sendChunk(chunk);
 
         // and then we update the buffer
         buffer = remaining;

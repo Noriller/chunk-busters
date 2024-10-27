@@ -30,7 +30,7 @@ This means that for each fetch... as the results come in, we will start renderin
 ---
 
 This might come as a surprise,
-but we are not fetching only the ammount of results that you're seeing before!
+but we are not fetching only the ammount of results that you were seeing before!
 
 `,
   boardHook: makeBoardHook(useMultiFetch),

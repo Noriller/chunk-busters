@@ -21,13 +21,14 @@ await fetch9();
 handleResult(9);
 \`\`\`
 
-Only then you start rendering.
+Only then you start rendering. Rinse and repeat.
 
-The main problem: what if the API was slower?
+The main problem: you have to wait each one complete,  
+also... what if the API was slower?
 
 > "Oh... no one actually does that..."
-
-_Are you sure? Like, absolutely sure?_
+>
+> _Are you sure? Like, absolutely sure?_
 
 `,
   boardHook: makeBoardHook(useMultiFetch),

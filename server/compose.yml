@@ -35,6 +35,8 @@ services:
         - action: sync+restart
           path: ./facade.mjs
           target: /server/facade.mjs
+    ports:
+      - "58880:58080"
 
   instance1: &instance-base
     build:

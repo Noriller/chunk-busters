@@ -12,7 +12,7 @@ export const v2 = {
 If waiting for all to complete is a bad idea, then we can just start
 fetching all in parallel and handle each as they come.
 
-_I'm smart, right?_
+_Smart, right?_
 
 \`\`\`typescript
 await Promise.all([

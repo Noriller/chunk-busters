@@ -1,8 +1,7 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useMemo } from 'react';
+import { BorderedBox } from './bordered-box';
 import { Button } from './ui/button';
 import { useSearchParamsState } from './useSearchParamsState';
-import { BorderedBox } from './bordered-box';
-
 
 function randomBetween(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min);

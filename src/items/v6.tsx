@@ -24,10 +24,12 @@ await fetchAll();
 handleAllResults(results);
 \`\`\`
 
-The best thing of this is that you can still just \`await\` the results.
+The best thing of this is that you can still just \`await\` the results.  
+(The frontend can choose how it will consume the API.)  
+And, the code for the frontend and backend are basically the same!
 
-The only **gotcha** is that data is out of order!
-But, the code for the frontend and backend are basically the same!
+The only **gotcha**: that data is (possibly) out of order!  
+In this case, _definitely_. Which board gets the first data? No idea!
 
 ---
 

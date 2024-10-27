@@ -29,7 +29,7 @@ This is probably the way most would handle this problem right?
 
 ---
 
-But... is this actually the best way to solve this problem?
+> But... is this actually the best way to solve this problem?
 
 ---
 

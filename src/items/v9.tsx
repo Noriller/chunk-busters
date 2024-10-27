@@ -11,6 +11,14 @@ export const v9 = {
   content: /*md*/ `
 ## V9: Play Around, Have Fun!
 
+### The next version is on _YOU_ ok?
+
+But, if you need help...
+
+_I'm here._ =D
+
+---
+
 If you go to the other versions, now you can also play around there.
 
 `,

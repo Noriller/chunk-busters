@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -31,6 +32,7 @@ function useProgressValue() {
   const [max, setMax] = useState(initProgress);
   const [defer, setDefer] = useSearchParamsState<'' | 'true'>('defer');
   const [extra, setExtra] = useSearchParamsState<'' | 'true'>('extra');
+  const fakeProgress = useFakeProgress();
 
   const changeCurrent = useCallback(
     (board: number, value: number) => {
@@ -78,11 +80,14 @@ function useProgressValue() {
     (board: number) => {
       if (isIndexValid(board)) {
         const progress = Math.floor((current[board] / max[board]) * 100);
-        return progress > 99 || isNaN(progress) ? 100 : progress;
+        if (isNaN(progress)) {
+          return fakeProgress[board];
+        }
+        return progress > 99 || progress < 0 ? 100 : progress;
       }
       return 0;
     },
-    [current, max],
+    [current, max, fakeProgress],
   );
 
   const reset = useCallback(() => {
@@ -172,4 +177,64 @@ export function ProgressContextProvider({
 
 export function useProgress() {
   return useContext(context);
+}
+
+function useFakeProgress() {
+  const [fake, setFake] = useState({
+    0: Math.random() > 0.5 ? 100 : 0,
+    1: Math.random() > 0.5 ? 100 : 0,
+    2: Math.random() > 0.5 ? 100 : 0,
+    3: Math.random() > 0.5 ? 100 : 0,
+    4: Math.random() > 0.5 ? 100 : 0,
+    5: Math.random() > 0.5 ? 100 : 0,
+    6: Math.random() > 0.5 ? 100 : 0,
+    7: Math.random() > 0.5 ? 100 : 0,
+    8: Math.random() > 0.5 ? 100 : 0,
+    9: Math.random() > 0.5 ? 100 : 0,
+  } as Record<Indexes, number>);
+
+  const [_target, setTarget] = useState({
+    0: Math.random() > 0.5 ? 100 : 0,
+    1: Math.random() > 0.5 ? 100 : 0,
+    2: Math.random() > 0.5 ? 100 : 0,
+    3: Math.random() > 0.5 ? 100 : 0,
+    4: Math.random() > 0.5 ? 100 : 0,
+    5: Math.random() > 0.5 ? 100 : 0,
+    6: Math.random() > 0.5 ? 100 : 0,
+    7: Math.random() > 0.5 ? 100 : 0,
+    8: Math.random() > 0.5 ? 100 : 0,
+    9: Math.random() > 0.5 ? 100 : 0,
+  } as Record<Indexes, 0 | 100>);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFake((prev) => {
+        setTarget((t) => {
+          Array.from({ length: 9 }).forEach((_, i) => {
+            if (Math.random() > 0.5) {
+              return;
+            }
+
+            const index = (i + 1) as Indexes;
+            const newVal =
+              t[index] === 100 ? (prev[index] += 1) : (prev[index] -= 1);
+
+            if (newVal < 1) {
+              t[index] = 100;
+            }
+
+            if (newVal > 99) {
+              t[index] = 0;
+            }
+          });
+
+          return structuredClone(t);
+        });
+        return structuredClone(prev);
+      });
+    }, 10);
+    return () => clearInterval(interval);
+  }, []);
+
+  return fake;
 }

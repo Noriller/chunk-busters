@@ -28,10 +28,10 @@ Browsers enforce a max parallel connections of 6 in most modern browsers (for th
 
 This means that you can't do all 9 fetches in parallel.
 
-> But... http/2
+> But... \`http/2\`
 >
 > Yes, there's \`http/2\`, but you can't really assume it's available for everyone.
-
+>
 > But... different addresses and/or ports.
 >
 > Yes, you can host each api in a different address and/or port. But...
