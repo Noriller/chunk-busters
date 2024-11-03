@@ -8,8 +8,16 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview --host",
+
     "service:dev": "docker compose -f ./server/compose.yml up --watch --build --force-recreate --remove-orphans",
-    "service:down": "docker compose -f ./server/compose.yml down"
+    "service:down": "docker compose -f ./server/compose.yml down",
+
+    "docker:build:app": "docker build -f ./prod/Dockerfile -t brunonoriller/chunk-busters-app .",
+    "docker:build:facade": "docker build -f ./facade.Dockerfile -t brunonoriller/chunk-busters-facade .",
+    "docker:build:instance": "docker build -f ./instance.Dockerfile -t brunonoriller/chunk-busters-instance .",
+
+    "prod:up": "docker compose -f ./prod/compose.yml up --force-recreate",
+    "prod:down": "docker compose -f ./prod/compose.yml down"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.0",

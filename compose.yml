@@ -1,0 +1,51 @@
+services:
+  app:
+    image: brunonoriller/chunk-busters-app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - 80:80
+    depends_on:
+      - facade
+
+  facade:
+    image: brunonoriller/chunk-busters-facade
+    depends_on:
+      - instance1
+      - instance2
+      - instance3
+      - instance4
+      - instance5
+      - instance6
+      - instance7
+      - instance8
+      - instance9
+    restart: unless-stopped
+
+  instance1: &instance-base
+    image: brunonoriller/chunk-busters-instance
+    restart: unless-stopped
+
+  instance2:
+    <<: *instance-base
+
+  instance3:
+    <<: *instance-base
+
+  instance4:
+    <<: *instance-base
+
+  instance5:
+    <<: *instance-base
+
+  instance6:
+    <<: *instance-base
+
+  instance7:
+    <<: *instance-base
+
+  instance8:
+    <<: *instance-base
+
+  instance9:
+    <<: *instance-base
