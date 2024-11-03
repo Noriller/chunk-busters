@@ -1,0 +1,83 @@
+# full version with open ports
+
+services:
+  app:
+    image: brunonoriller/chunk-busters-app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - 80:80
+    depends_on:
+      - facade
+    networks:
+      - chunk
+
+  facade:
+    image: brunonoriller/chunk-busters-facade
+    depends_on:
+      - instance1
+      - instance2
+      - instance3
+      - instance4
+      - instance5
+      - instance6
+      - instance7
+      - instance8
+      - instance9
+    restart: unless-stopped
+    ports:
+      - "58880:58080"
+    networks:
+      - chunk
+
+  instance1: &instance-base
+    image: brunonoriller/chunk-busters-instance
+    restart: unless-stopped
+    networks:
+      - chunk
+    ports:
+      - "58881:58080"
+
+  instance2:
+    <<: *instance-base
+    ports:
+      - "58882:58080"
+
+  instance3:
+    <<: *instance-base
+    ports:
+      - "58883:58080"
+
+  instance4:
+    <<: *instance-base
+    ports:
+      - "58884:58080"
+
+  instance5:
+    <<: *instance-base
+    ports:
+      - "58885:58080"
+
+  instance6:
+    <<: *instance-base
+    ports:
+      - "58886:58080"
+
+  instance7:
+    <<: *instance-base
+    ports:
+      - "58887:58080"
+
+  instance8:
+    <<: *instance-base
+    ports:
+      - "58888:58080"
+
+  instance9:
+    <<: *instance-base
+    ports:
+      - "58889:58080"
+
+networks:
+  chunk:
+    driver: bridge
