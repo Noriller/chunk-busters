@@ -14,7 +14,7 @@ const decoder = new TextDecoder('utf-8');
 // have it work in parallel, even all 9 at once
 // but thats a kludge that is not really scalable
 // and as you'll see... there's better ways to solve this
-const BASE_URL = (api: number) => `http://localhost/api/${api}`;
+const BASE_URL = (api: number) => `http://${window.location.host}/api/${api}`;
 // but changing to this one would "fix" the http/1 problem
 // const BASE_URL = (api: number) => `http://localhost:5888${api}/${api}`;
 
@@ -240,10 +240,10 @@ export function usePostToApi() {
   // so, this one bypass the limit
   const BASE_URL_POST = (api: number) => {
     if (api === 0) {
-      return `http://localhost:58880`;
+      return `http://${window.location.host}:58880`;
     }
 
-    return `http://localhost:5888${api}/${api}`;
+    return `http://${window.location.host}:5888${api}/${api}`;
   };
 
   return async ({
