@@ -1,6 +1,6 @@
 import { makeBoardHook, makeOffBoard } from '@/components/board/useBoards';
 import { type NavItem } from '.';
-import { boardCounter, useFetchApi } from './utils/fetch';
+import { useFetchApi } from './utils/fetch';
 import { parseAndToggleOnce, type SetLights } from './utils/parseLine';
 
 export const v1 = {
