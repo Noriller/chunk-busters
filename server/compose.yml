@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: ./facade.Dockerfile
-    restart: on-failure
+    restart: unless-stopped
     depends_on:
       - instance1
       - instance2
@@ -42,7 +42,7 @@ services:
     build:
       context: .
       dockerfile: ./instance.Dockerfile
-    restart: on-failure
+    restart: unless-stopped
     develop:
       watch:
         - action: sync+restart
