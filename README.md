@@ -8,11 +8,17 @@ If you didn't, check the links below:
 
 ### Article
 
-TODO: links
+The published article:
 
-### Video
+https://dev.to/noriller/chunk-busters-dont-cross-the-streams-35cg
 
-TODO: link
+[OR in article.md](article.md)
+
+### The Video
+
+Video version to follow along:
+
+https://youtu.be/QucaOfFI0fM
 
 ## How to Run
 
